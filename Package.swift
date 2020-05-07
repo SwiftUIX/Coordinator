@@ -10,6 +10,9 @@ let package = Package(
         .tvOS(.v13),
         .watchOS(.v6)
     ],
+    products: [
+        .library(name: "Coordinator", targets: ["Coordinator"])
+    ],
     dependencies: [
         .package(url: "git@github.com:vmanot/Merge.git", .branch("master")),
         .package(url: "git@github.com:vmanot/Task.git", .branch("master")),
