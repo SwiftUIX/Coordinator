@@ -16,20 +16,14 @@ public final class AnyViewRouter<Route: ViewRoute>: ViewRouter {
         base.presenter
     }
     
-    private let transitionImpl: (Route) -> ViewTransition
     private let triggerPublisherImpl: (Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError>
     private let triggerImpl: (Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError>
     
-    public init<VC: ViewCoordinator>(_ coordinator: VC) where VC.Route == Route {
-        self.base = coordinator
+    public init<Router: ViewRouter>(_ router: Router) where Router.Route == Route {
+        self.base = router
         
-        self.transitionImpl = coordinator.transition
-        self.triggerPublisherImpl = coordinator.triggerPublisher
-        self.triggerImpl = coordinator.trigger
-    }
-    
-    public func transition(for route: Route) -> Transition {
-        transitionImpl(route)
+        self.triggerPublisherImpl = router.triggerPublisher
+        self.triggerImpl = router.trigger
     }
     
     @discardableResult
