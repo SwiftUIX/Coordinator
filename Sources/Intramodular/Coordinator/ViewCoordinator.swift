@@ -6,8 +6,10 @@ import Merge
 import Foundation
 import SwiftUIX
 
-public protocol ViewCoordinator: EnvironmentProvider, ViewRouter {    
-    func transition(for: Route) -> ViewTransition
+public protocol ViewCoordinator: EnvironmentProvider, ViewRouter {
+    typealias Transition = ViewTransition
+    
+    func transition(for: Route) -> Transition
 }
 
 // MARK: - API -

@@ -28,7 +28,7 @@ public final class AnyViewRouter<Route: ViewRoute>: ViewRouter {
         self.triggerImpl = coordinator.trigger
     }
     
-    public func transition(for route: Route) -> ViewTransition {
+    public func transition(for route: Route) -> Transition {
         transitionImpl(route)
     }
     
