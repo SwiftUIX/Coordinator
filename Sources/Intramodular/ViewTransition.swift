@@ -75,6 +75,8 @@ extension ViewTransition {
                 return nil
             case .popOrDismiss:
                 return nil
+            case .popToRootOrDismiss:
+                return nil
             case .set:
                 return nil
             case .setRoot:
@@ -151,6 +153,11 @@ extension ViewTransition {
     @inlinable
     public static var popOrDismiss: ViewTransition {
         .init(payload: .popOrDismiss)
+    }
+    
+    @inlinable
+    public static var popToRootOrDismiss: ViewTransition {
+        .init(payload: .popToRootOrDismiss)
     }
     
     @inlinable

@@ -22,6 +22,7 @@ extension ViewTransition {
         case pop
         case popToRoot
         case popOrDismiss
+        case popToRootOrDismiss
         
         case set(View)
         case setRoot(View)
@@ -57,6 +58,8 @@ extension ViewTransition.Payload {
                 case .popToRoot:
                     return nil
                 case .popOrDismiss:
+                    return nil
+                case .popToRootOrDismiss:
                     return nil
                 case .set(let view):
                     return view
@@ -94,6 +97,8 @@ extension ViewTransition.Payload {
                 case .popToRoot:
                     break
                 case .popOrDismiss:
+                    break
+                case .popToRootOrDismiss:
                     break
                 case .set:
                     self = .set(newValue)

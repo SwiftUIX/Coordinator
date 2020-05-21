@@ -115,6 +115,22 @@ extension UIViewController {
                 }
             }
             
+            case .popToRootOrDismiss: do {
+                if let navigationController = topmostNavigationController, navigationController.viewControllers.count > 1 {
+                    navigationController.popToRootViewController(animated: animated) {
+                        completion()
+                    }
+                } else {
+                    guard presentedViewController != nil else {
+                        throw ViewRouterError.transitionError(.nothingToDismiss)
+                    }
+                    
+                    dismiss(animated: animated) {
+                        completion()
+                    }
+                }
+            }
+
             case .setRoot(let view): do {
                 if let viewController = self as? CocoaHostingController<EnvironmentalAnyView> {
                     viewController.rootViewContent = view

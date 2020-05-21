@@ -15,6 +15,7 @@ extension ViewTransition {
     ) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
         let transition = mergeCoordinator(coordinator)
         let animated = transition.animated
+        
         if case .dynamic(let trigger) = transition.finalize() {
             return trigger()
         }
