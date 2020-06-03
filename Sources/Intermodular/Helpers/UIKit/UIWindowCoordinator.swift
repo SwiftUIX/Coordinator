@@ -8,7 +8,13 @@ import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
-open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, DynamicViewPresenter {
+public protocol UIWindowCoordinatorProtocol: ViewCoordinator {
+    var window: UIWindow { get }
+    
+    init(window: UIWindow)
+}
+
+open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, UIWindowCoordinatorProtocol {
     public var window: UIWindow
     
     @inlinable
@@ -17,39 +23,45 @@ open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, Dy
     }
     
     @inlinable
-    open var presented: DynamicViewPresentable? {
-        window.presented
-    }
-    
-    @inlinable
-    public init(window: UIWindow) {
+    public required init(window: UIWindow) {
         self.window = window
     }
     
     @inlinable
-    public convenience init<Route: ViewRoute>(parent: UIWindowCoordinator<Route>) {
+    convenience public init<Route: ViewRoute>(parent: UIWindowCoordinator<Route>) {
         self.init(window: parent.window)
         
         parent.addChild(self)
     }
     
+    override open func transition(for route: Route) -> ViewTransition {
+        fatalError()
+    }
+    
     @discardableResult
     @inlinable
-    public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    override public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
         return transition(for: route)
             .mergeEnvironmentBuilder(environmentBuilder)
             .triggerPublisher(in: window, coordinator: self)
             .handleSubscription({ _ in self.window.makeKeyAndVisible() })
             .eraseToAnyPublisher()
     }
+}
+
+extension UIWindowCoordinator: DynamicViewPresenter {
+    @inlinable
+    final public var presented: DynamicViewPresentable? {
+        window.presented
+    }
     
     @inlinable
-    public func present(_ presentation: AnyModalPresentation) {
+    final public func present(_ presentation: AnyModalPresentation) {
         window.present(presentation)
     }
     
     @inlinable
-    public func dismiss(animated: Bool, completion: (() -> Void)?) {
+    final public func dismiss(animated: Bool, completion: (() -> Void)?) {
         window.dismiss(animated: animated, completion: completion)
     }
 }

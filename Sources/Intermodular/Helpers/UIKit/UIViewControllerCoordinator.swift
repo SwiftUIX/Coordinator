@@ -17,11 +17,6 @@ open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Ro
     }
     
     @inlinable
-    open var presented: DynamicViewPresentable? {
-        rootViewController.presented
-    }
-    
-    @inlinable
     public init(rootViewController: UIViewController) {
         self.rootViewController = rootViewController
     }
@@ -33,6 +28,10 @@ open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Ro
         parent.addChild(self)
     }
     
+    override open func transition(for route: Route) -> ViewTransition {
+        fatalError()
+    }
+    
     @inlinable
     public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
         transition(for: route)
@@ -40,13 +39,21 @@ open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Ro
             .triggerPublisher(in: rootViewController, animated: true, coordinator: self)
     }
     
+}
+
+extension UIViewControllerCoordinator {
     @inlinable
-    public func present(_ presentation: AnyModalPresentation) {
+    final public var presented: DynamicViewPresentable? {
+        rootViewController.presented
+    }
+    
+    @inlinable
+    final public func present(_ presentation: AnyModalPresentation) {
         rootViewController.present(presentation)
     }
     
     @inlinable
-    public func dismiss(animated: Bool, completion: (() -> Void)?) {
+    final public func dismiss(animated: Bool, completion: (() -> Void)?) {
         rootViewController.dismiss(animated: animated, completion: completion)
     }
 }
