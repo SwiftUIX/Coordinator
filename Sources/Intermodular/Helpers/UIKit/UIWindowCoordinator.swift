@@ -18,8 +18,8 @@ open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, UI
     public var window: UIWindow
     
     @inlinable
-    override open var name: ViewName? {
-        window.name
+    override open var presentationName: ViewName? {
+        window.presentationName
     }
     
     @inlinable

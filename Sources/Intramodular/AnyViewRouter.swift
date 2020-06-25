@@ -8,8 +8,8 @@ import SwiftUIX
 public final class AnyViewRouter<Route: ViewRoute>: ViewRouter {
     public let base: DynamicViewPresentable
     
-    public var name: ViewName? {
-        base.name
+    public var presentationName: ViewName? {
+        base.presentationName
     }
     
     public var presenter: DynamicViewPresenter? {

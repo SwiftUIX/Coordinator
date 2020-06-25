@@ -16,8 +16,8 @@ public final class AnyViewCoordinator<Route: ViewRoute>: ViewCoordinator {
         }
     }
     
-    public var name: ViewName? {
-        base.name
+    public var presentationName: ViewName? {
+        base.presentationName
     }
     
     public var presenter: DynamicViewPresenter? {

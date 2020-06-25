@@ -12,7 +12,7 @@ open class OpaqueBaseViewCoordinator: DynamicViewPresentable {
     
     open var environmentBuilder = EnvironmentBuilder()
     
-    open var name: ViewName? {
+    open var presentationName: ViewName? {
         return nil
     }
     

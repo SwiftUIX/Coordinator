@@ -12,8 +12,8 @@ open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Ro
     public var rootViewController: UIViewController
     
     @inlinable
-    override open var name: ViewName? {
-        rootViewController.name
+    override open var presentationName: ViewName? {
+        rootViewController.presentationName
     }
     
     @inlinable

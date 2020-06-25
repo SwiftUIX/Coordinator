@@ -14,7 +14,7 @@ public class EmptyViewRouter: ViewRouter {
     
     public var environmentBuilder = EnvironmentBuilder()
     
-    public var name: ViewName? {
+    public var presentationName: ViewName? {
         nil
     }
     
