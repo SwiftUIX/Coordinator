@@ -14,11 +14,11 @@ open class UIWindowCoordinatorSceneDelegateBase<AppDelegate: UIApplicationDelega
     open var initialEnvironment: EnvironmentBuilder {
         .init()
     }
-
+    
     open var initialRoute: Coordinator.Route? {
         return nil
     }
-        
+    
     @available(iOSApplicationExtension, unavailable)
     open var applicationDelegate: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
@@ -30,11 +30,11 @@ open class UIWindowCoordinatorSceneDelegateBase<AppDelegate: UIApplicationDelega
         }
         
         let coordinator = Coordinator.init(window: UIWindow(windowScene: windowScene))
-                
+        
         self.coordinator = coordinator
         
         coordinator.mergeEnvironmentBuilder(initialEnvironment)
-
+        
         if let initialRoute = initialRoute {
             coordinator.trigger(initialRoute)
         }

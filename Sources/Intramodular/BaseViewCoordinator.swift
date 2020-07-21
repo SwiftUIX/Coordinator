@@ -37,25 +37,36 @@ open class BaseViewCoordinator<Route: ViewRoute>: OpaqueBaseViewCoordinator, Vie
     public func insertEnvironmentObject<B: ObservableObject>(_ bindable: B) {
         environmentBuilder.insert(bindable)
         
-        children.forEach({
-            ($0 as? EnvironmentProvider)?.insertEnvironmentObject(bindable)
-        })
+        for child in children {
+            if let child = child as? EnvironmentProvider {
+                child.insertEnvironmentObject(bindable)
+            }
+        }
     }
     
     @inlinable
     public func mergeEnvironmentBuilder(_ builder: EnvironmentBuilder) {
         environmentBuilder.merge(builder)
         
-        children.forEach({
-            ($0 as? EnvironmentProvider)?.mergeEnvironmentBuilder(builder)
-        })
+        for child in children {
+            if let child = child as? EnvironmentProvider {
+                child.mergeEnvironmentBuilder(builder)
+            }
+        }
     }
     
     open func addChild(_ presentable: DynamicViewPresentable) {
-        (presentable as? DynamicViewPresenter)?.insertEnvironmentObject(AnyViewCoordinator(self))
-        (presentable as? EnvironmentProvider)?.mergeEnvironmentBuilder(environmentBuilder)
+        if let presentable = presentable as? DynamicViewPresenter {
+            presentable.insertEnvironmentObject(AnyViewCoordinator(self))
+        }
         
-        (presentable as? OpaqueBaseViewCoordinator)?.becomeChild(of: self)
+        if let presentable = presentable as? EnvironmentProvider {
+            presentable.mergeEnvironmentBuilder(environmentBuilder)
+        }
+        
+        if let presentable = presentable as? OpaqueBaseViewCoordinator {
+            presentable.becomeChild(of: self)
+        }
         
         children.append(presentable)
     }
@@ -63,11 +74,17 @@ open class BaseViewCoordinator<Route: ViewRoute>: OpaqueBaseViewCoordinator, Vie
     override open func becomeChild(of parent: OpaqueBaseViewCoordinator) {
         presenter = parent as? DynamicViewPresenter // FIXME!!!
         
-        (parent as? EnvironmentProvider)?.insertEnvironmentObject(AnyViewCoordinator(self))
+        if let parent = parent as? EnvironmentProvider {
+            parent.insertEnvironmentObject(AnyViewCoordinator(self))
+        }
         
         mergeEnvironmentBuilder(parent.environmentBuilder)
         
-        children.forEach({ ($0 as? OpaqueBaseViewCoordinator)?.becomeChild(of: self) })
+        for child in children {
+            if let child = child as? OpaqueBaseViewCoordinator {
+                child.becomeChild(of: self)
+            }
+        }
     }
     
     @inlinable
