@@ -21,7 +21,7 @@ extension UIViewController {
                 }
             }
             
-            case .replacePresented(let view): do {
+            case .replace(let view): do {
                 if let viewController = topmostPresentedViewController?.presentingViewController {
                     viewController.dismiss(animated: animated) {
                         viewController.presentOnTop(view, named: transition.payloadViewName, animated: animated) {

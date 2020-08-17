@@ -6,7 +6,7 @@ import Merge
 import SwiftUIX
 
 open class OpaqueBaseViewCoordinator: DynamicViewPresentable {
-    public static var _runtimeLookupCache: [ObjectIdentifier: Unmanaged<OpaqueBaseViewCoordinator>] = [:]
+    public static var _runtimeLookup: [ObjectIdentifier: Unmanaged<OpaqueBaseViewCoordinator>] = [:]
     
     public let cancellables = Cancellables()
     
@@ -20,11 +20,11 @@ open class OpaqueBaseViewCoordinator: DynamicViewPresentable {
     open internal(set) var children: [DynamicViewPresentable] = []
     
     public init() {
-        Self._runtimeLookupCache[ObjectIdentifier(Self.self)] = Unmanaged.passUnretained(self)
+        Self._runtimeLookup[ObjectIdentifier(Self.self)] = Unmanaged.passUnretained(self)
     }
     
     deinit {
-        Self._runtimeLookupCache[ObjectIdentifier(Self.self)] = nil
+        Self._runtimeLookup[ObjectIdentifier(Self.self)] = nil
     }
     
     func becomeChild(of parent: OpaqueBaseViewCoordinator) {

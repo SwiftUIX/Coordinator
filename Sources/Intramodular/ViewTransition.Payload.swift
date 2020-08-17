@@ -13,7 +13,7 @@ extension ViewTransition {
         typealias View = EnvironmentalAnyView
         
         case present(View)
-        case replacePresented(with: View)
+        case replace(with: View)
         case dismiss
         case dismissView(named: ViewName)
         
@@ -43,7 +43,7 @@ extension ViewTransition.Payload {
             switch self {
                 case .present(let view):
                     return view
-                case .replacePresented(let view):
+                case .replace(let view):
                     return view
                 case .dismiss:
                     return nil
@@ -82,8 +82,8 @@ extension ViewTransition.Payload {
             switch self {
                 case .present:
                     self = .present(newValue)
-                case .replacePresented:
-                    self = .replacePresented(with: newValue)
+                case .replace:
+                    self = .replace(with: newValue)
                 case .dismiss:
                     break
                 case .dismissView:

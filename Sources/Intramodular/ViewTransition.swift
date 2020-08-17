@@ -29,7 +29,7 @@ public struct ViewTransition {
     @usableFromInline
     init<V: View>(payload: (EnvironmentalAnyView) -> ViewTransition.Payload, view: V) {
         self.payload = payload(.init(view))
-        self.payloadViewName = (view as? opaque_NamedView)?.name
+        self.payloadViewName = (view as? _opaque_NamedView)?.name
         self.payloadViewType = type(of: view)
         self.environmentBuilder = .init()
     }
@@ -59,7 +59,7 @@ extension ViewTransition {
         switch payload {
             case .present:
                 return .dismiss
-            case .replacePresented:
+            case .replace:
                 return nil
             case .dismiss:
                 return nil
@@ -116,8 +116,8 @@ extension ViewTransition {
     }
     
     @inlinable
-    public static func replacePresented<V: View>(with view: V) -> ViewTransition {
-        .init(payload: ViewTransition.Payload.replacePresented, view: view)
+    public static func replace<V: View>(with view: V) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.replace, view: view)
     }
     
     @inlinable
