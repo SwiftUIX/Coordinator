@@ -60,9 +60,16 @@ extension UIWindowCoordinator: DynamicViewPresenter {
         window.present(presentation)
     }
     
+    @discardableResult
     @inlinable
-    final public func dismiss(animated: Bool, completion: (() -> Void)?) {
-        window.dismiss(animated: animated, completion: completion)
+    final public func dismiss(withAnimation animation: Animation?) -> Future<Bool, Never> {
+        window.dismiss(withAnimation: animation)
+    }
+    
+    @discardableResult
+    @inlinable
+    final public func dismissSelf(withAnimation animation: Animation?) -> Future<Bool, Never> {
+        window.dismissSelf(withAnimation: animation)
     }
 }
 

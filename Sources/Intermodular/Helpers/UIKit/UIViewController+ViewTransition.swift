@@ -46,9 +46,9 @@ extension UIViewController {
             }
             
             case .dismissView(let name): do {
-                dismissView(named: name) { // FIXME: Does not respect `animated`!
-                    completion()
-                }
+                _ = dismissView(named: name)
+                    .onOutput(do: completion())
+                    .retainSink()
             }
             
             case .push(let view): do {
