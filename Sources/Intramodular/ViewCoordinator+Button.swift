@@ -7,13 +7,13 @@ import Foundation
 import SwiftUIX
 
 /// A control which dispatches a reactor action when triggered.
-public struct ViewCoordinatorButton<Route: ViewRoute, Label: View>: View {
+public struct ViewCoordinatorButton<Route: Hashable, Label: View>: View {
     private let route: Route
-    private let trigger: () -> AnyPublisher<ViewTransitionContext, ViewRouterError>
+    private let trigger: () -> AnyPublisher<ViewTransitionContext, Error>
     
     private let label: Label
     
-    public init<Router: ViewRouter>(route: Route, router: Router, label: () -> Label) where Router.Route == Route {
+    public init<C: ViewCoordinator>(route: Route, router: C, label: () -> Label) where C.Route == Route {
         self.route = route
         self.trigger = { router.trigger(route) }
         self.label = label()

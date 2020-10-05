@@ -5,18 +5,13 @@
 import Merge
 import SwiftUIX
 
-open class OpaqueBaseViewCoordinator: DynamicViewPresentable {
+open class OpaqueBaseViewCoordinator {
     public static var _runtimeLookup: [ObjectIdentifier: Unmanaged<OpaqueBaseViewCoordinator>] = [:]
     
     public let cancellables = Cancellables()
     
     open var environmentBuilder = EnvironmentBuilder()
     
-    open var presentationName: ViewName? {
-        return nil
-    }
-    
-    open internal(set) var presenter: DynamicViewPresenter?
     open internal(set) var children: [DynamicViewPresentable] = []
     
     public init() {
@@ -32,7 +27,7 @@ open class OpaqueBaseViewCoordinator: DynamicViewPresentable {
     }
 }
 
-open class BaseViewCoordinator<Route: ViewRoute>: OpaqueBaseViewCoordinator, ViewCoordinator {
+open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, ViewCoordinator {
     @inlinable
     public func insertEnvironmentObject<B: ObservableObject>(_ bindable: B) {
         environmentBuilder.insert(bindable)
@@ -72,8 +67,6 @@ open class BaseViewCoordinator<Route: ViewRoute>: OpaqueBaseViewCoordinator, Vie
     }
     
     override open func becomeChild(of parent: OpaqueBaseViewCoordinator) {
-        presenter = parent as? DynamicViewPresenter // FIXME!!!
-        
         if let parent = parent as? EnvironmentProvider {
             parent.insertEnvironmentObject(AnyViewCoordinator(self))
         }
@@ -93,23 +86,18 @@ open class BaseViewCoordinator<Route: ViewRoute>: OpaqueBaseViewCoordinator, Vie
     }
     
     @inlinable
-    public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         Empty().eraseToAnyPublisher()
     }
     
     @discardableResult
     @inlinable
-    public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         let publisher = triggerPublisher(for: route)
-        let result = PassthroughSubject<ViewTransitionContext, ViewRouterError>()
+        let result = PassthroughSubject<ViewTransitionContext, Error>()
         
         publisher.subscribe(result, storeIn: cancellables)
         
         return result.eraseToAnyPublisher()
-    }
-    
-    @inlinable
-    public func parent<R, C: BaseViewCoordinator<R>>(ofType type: C.Type) -> C? {
-        presenter as? C
     }
 }

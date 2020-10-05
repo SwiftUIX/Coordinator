@@ -8,12 +8,17 @@ import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
-open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, DynamicViewPresenter {
+open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, DynamicViewPresenter {
     public var rootViewController: UIViewController
     
     @inlinable
-    override open var presentationName: ViewName? {
+    open var presentationName: ViewName? {
         rootViewController.presentationName
+    }
+    
+    @inlinable
+    open var presenter: DynamicViewPresenter? {
+        nil
     }
     
     @inlinable
@@ -22,7 +27,7 @@ open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Ro
     }
     
     @inlinable
-    public convenience init<Route: ViewRoute>(parent: UIViewControllerCoordinator<Route>) {
+    public convenience init<Route: Hashable>(parent: UIViewControllerCoordinator<Route>) {
         self.init(rootViewController: parent.rootViewController)
         
         parent.addChild(self)
@@ -33,7 +38,7 @@ open class UIViewControllerCoordinator<Route: ViewRoute>: BaseViewCoordinator<Ro
     }
     
     @inlinable
-    public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         transition(for: route)
             .mergeEnvironmentBuilder(environmentBuilder)
             .triggerPublisher(in: rootViewController, animated: true, coordinator: self)

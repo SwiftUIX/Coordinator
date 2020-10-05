@@ -14,11 +14,11 @@ public protocol UIWindowCoordinatorProtocol: ViewCoordinator {
     init(window: UIWindow)
 }
 
-open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, UIWindowCoordinatorProtocol {
+open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIWindowCoordinatorProtocol {
     public var window: UIWindow
     
     @inlinable
-    override open var presentationName: ViewName? {
+    open var presentationName: ViewName? {
         window.presentationName
     }
     
@@ -28,7 +28,7 @@ open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, UI
     }
     
     @inlinable
-    convenience public init<Route: ViewRoute>(parent: UIWindowCoordinator<Route>) {
+    convenience public init<Route: Hashable>(parent: UIWindowCoordinator<Route>) {
         self.init(window: parent.window)
         
         parent.addChild(self)
@@ -40,7 +40,7 @@ open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, UI
     
     @discardableResult
     @inlinable
-    override public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    override public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         return transition(for: route)
             .mergeEnvironmentBuilder(environmentBuilder)
             .triggerPublisher(in: window, coordinator: self)
@@ -50,6 +50,11 @@ open class UIWindowCoordinator<Route: ViewRoute>: BaseViewCoordinator<Route>, UI
 }
 
 extension UIWindowCoordinator: DynamicViewPresenter {
+    @inlinable
+    open var presenter: DynamicViewPresenter? {
+        nil
+    }
+
     @inlinable
     final public var presented: DynamicViewPresentable? {
         window.presented

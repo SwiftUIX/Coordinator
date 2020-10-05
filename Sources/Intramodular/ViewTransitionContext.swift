@@ -5,6 +5,5 @@
 import SwiftUIX
 
 public protocol ViewTransitionContext {
-    var animation: ViewTransitionAnimation { get }
-    var view: AnyPresentationView? { get }
+    
 }

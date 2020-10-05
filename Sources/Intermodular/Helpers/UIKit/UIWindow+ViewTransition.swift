@@ -12,7 +12,7 @@ extension ViewTransition {
     func triggerPublisher<VC: ViewCoordinator>(
         in window: UIWindow,
         coordinator: VC
-    ) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
         let transition = mergeCoordinator(coordinator)
         let animated = transition.animated
         
@@ -36,7 +36,7 @@ extension ViewTransition {
                             attemptToFulfill(.success(self))
                         }
                     } catch {
-                        attemptToFulfill(.failure(.init(error)))
+                        attemptToFulfill(.failure(error))
                     }
                 }
             }

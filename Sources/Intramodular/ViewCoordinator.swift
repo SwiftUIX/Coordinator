@@ -6,8 +6,14 @@ import Merge
 import Foundation
 import SwiftUIX
 
-public protocol ViewCoordinator: EnvironmentProvider, ViewRouter {
+public protocol ViewCoordinator: EnvironmentProvider, ObservableObject {
+    associatedtype Route: Hashable
+    
     typealias Transition = ViewTransition
+    
+    func triggerPublisher(for _: Route) -> AnyPublisher<ViewTransitionContext, Error>
+    @discardableResult
+    func trigger(_: Route) -> AnyPublisher<ViewTransitionContext, Error>
     
     func transition(for: Route) -> Transition
 }

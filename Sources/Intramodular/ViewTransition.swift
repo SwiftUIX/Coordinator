@@ -6,7 +6,7 @@ import Merge
 import Foundation
 import SwiftUIX
 
-public struct ViewTransition {
+public struct ViewTransition: ViewTransitionContext {
     public enum Error: Swift.Error {
         case cannotPopRoot
         case isRoot
@@ -95,18 +95,6 @@ extension ViewTransition {
 
 // MARK: - Protocol Implementations -
 
-extension ViewTransition: ViewTransitionContext {
-    @inlinable
-    public var animation: ViewTransitionAnimation {
-        DefaultViewTransitionAnimation()
-    }
-    
-    @inlinable
-    public var view: AnyPresentationView? {
-        finalize().view
-    }
-}
-
 // MARK: - API -
 
 extension ViewTransition {
@@ -187,7 +175,7 @@ extension ViewTransition {
     
     @inlinable
     public static func dynamic(
-        _ body: @escaping () -> AnyPublisher<ViewTransitionContext, ViewRouterError>
+        _ body: @escaping () -> AnyPublisher<ViewTransitionContext, Swift.Error>
     ) -> ViewTransition {
         .init(payload: .dynamic(body))
     }
@@ -208,7 +196,7 @@ extension ViewTransition {
     }
     
     public func mergeCoordinator<VC: ViewCoordinator>(_ coordinator: VC) -> Self {
-        mergeEnvironmentBuilder(.object(coordinator))
+        self.mergeEnvironmentBuilder(.object(coordinator))
             .mergeEnvironmentBuilder(.object(AnyViewCoordinator(coordinator)))
     }
 }

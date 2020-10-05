@@ -5,8 +5,8 @@
 import Merge
 import SwiftUIX
 
-public final class AnyViewCoordinator<Route: ViewRoute>: ViewCoordinator {
-    public let base: DynamicViewPresentable & EnvironmentProvider
+public final class AnyViewCoordinator<Route: Hashable>: ViewCoordinator {
+    public let base: EnvironmentProvider
     
     public var environmentBuilder: EnvironmentBuilder {
         get {
@@ -16,17 +16,9 @@ public final class AnyViewCoordinator<Route: ViewRoute>: ViewCoordinator {
         }
     }
     
-    public var presentationName: ViewName? {
-        base.presentationName
-    }
-    
-    public var presenter: DynamicViewPresenter? {
-        base.presenter
-    }
-    
     private let transitionImpl: (Route) -> ViewTransition
-    private let triggerPublisherImpl: (Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError>
-    private let triggerImpl: (Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError>
+    private let triggerPublisherImpl: (Route) -> AnyPublisher<ViewTransitionContext, Error>
+    private let triggerImpl: (Route) -> AnyPublisher<ViewTransitionContext, Error>
     
     public init<VC: ViewCoordinator>(_ coordinator: VC) where VC.Route == Route {
         self.base = coordinator
@@ -41,12 +33,34 @@ public final class AnyViewCoordinator<Route: ViewRoute>: ViewCoordinator {
     }
     
     @discardableResult
-    public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         triggerPublisherImpl(route)
     }
     
     @discardableResult
-    public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         triggerImpl(route)
+    }
+}
+
+public class EmptyViewCoordinator: ViewCoordinator {
+    public typealias Route = Never
+    
+    public var environmentBuilder = EnvironmentBuilder()
+    
+    public init() {
+        
+    }
+    
+    public func transition(for: Never) -> ViewTransition {
+        
+    }
+    
+    public func triggerPublisher(for _: Route) -> AnyPublisher<ViewTransitionContext, Error> {
+        
+    }
+    
+    public func trigger(_ : Route) -> AnyPublisher<ViewTransitionContext, Error> {
+        
     }
 }

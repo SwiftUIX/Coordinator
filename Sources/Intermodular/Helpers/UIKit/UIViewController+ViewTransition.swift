@@ -37,7 +37,7 @@ extension UIViewController {
             
             case .dismiss: do {
                 guard presentedViewController != nil else {
-                    throw ViewRouterError.transitionError(.nothingToDismiss)
+                    throw ViewTransition.Error.nothingToDismiss
                 }
                 
                 dismiss(animated: animated) {
@@ -53,7 +53,7 @@ extension UIViewController {
             
             case .push(let view): do {
                 guard let navigationController = topmostNavigationController else {
-                    throw ViewRouterError.transitionError(.navigationControllerMissing)
+                    throw ViewTransition.Error.navigationControllerMissing
                 }
                 
                 navigationController.pushViewController(
@@ -81,7 +81,7 @@ extension UIViewController {
             
             case .pop: do {
                 guard let viewController = topmostNavigationController else {
-                    throw ViewRouterError.transitionError(.navigationControllerMissing)
+                    throw ViewTransition.Error.navigationControllerMissing
                 }
                 
                 viewController.popViewController(animated: animated) {
@@ -91,7 +91,7 @@ extension UIViewController {
             
             case .popToRoot: do {
                 guard let viewController = topmostNavigationController else {
-                    throw ViewRouterError.transitionError(.navigationControllerMissing)
+                    throw ViewTransition.Error.navigationControllerMissing
                 }
                 
                 viewController.popToRootViewController(animated: animated) {
@@ -106,7 +106,7 @@ extension UIViewController {
                     }
                 } else {
                     guard presentedViewController != nil else {
-                        throw ViewRouterError.transitionError(.nothingToDismiss)
+                        throw ViewTransition.Error.nothingToDismiss
                     }
                     
                     dismiss(animated: animated) {
@@ -122,7 +122,7 @@ extension UIViewController {
                     }
                 } else {
                     guard presentedViewController != nil else {
-                        throw ViewRouterError.transitionError(.nothingToDismiss)
+                        throw ViewTransition.Error.nothingToDismiss
                     }
                     
                     dismiss(animated: animated) {
@@ -130,7 +130,7 @@ extension UIViewController {
                     }
                 }
             }
-
+            
             case .setRoot(let view): do {
                 if let viewController = self as? CocoaHostingController<AnyPresentationView> {
                     viewController.rootViewContent = view
@@ -228,7 +228,11 @@ extension UIViewController {
 
 extension ViewTransition {
     @usableFromInline
-    func triggerPublisher<VC: ViewCoordinator>(in controller: UIViewController, animated: Bool, coordinator: VC) -> AnyPublisher<ViewTransitionContext, ViewRouterError> {
+    func triggerPublisher<VC: ViewCoordinator>(
+        in controller: UIViewController,
+        animated: Bool,
+        coordinator: VC
+    ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
         let transition = mergeCoordinator(coordinator)
         
         if case .dynamic(let trigger) = transition.finalize() {
@@ -241,7 +245,7 @@ extension ViewTransition {
                     attemptToFulfill(.success(transition))
                 }
             } catch {
-                attemptToFulfill(.failure(.init(error)))
+                attemptToFulfill(.failure(error))
             }
         }
         .eraseToAnyPublisher()

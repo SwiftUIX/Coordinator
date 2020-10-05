@@ -9,28 +9,25 @@ import SwiftUIX
 extension ViewTransition {
     @usableFromInline
     enum Payload {
-        @usableFromInline
-        typealias View = AnyPresentationView
-        
-        case present(View)
-        case replace(with: View)
+        case present(AnyPresentationView)
+        case replace(with: AnyPresentationView)
         case dismiss
         case dismissView(named: ViewName)
         
-        case push(View)
-        case pushOrPresent(View)
+        case push(AnyPresentationView)
+        case pushOrPresent(AnyPresentationView)
         case pop
         case popToRoot
         case popOrDismiss
         case popToRootOrDismiss
         
-        case set(View)
-        case setRoot(View)
-        case setNavigatable(View)
+        case set(AnyPresentationView)
+        case setRoot(AnyPresentationView)
+        case setNavigatable(AnyPresentationView)
         
         case linear([ViewTransition])
         
-        case dynamic(() -> AnyPublisher<ViewTransitionContext, ViewRouterError>)
+        case dynamic(() -> AnyPublisher<ViewTransitionContext, Swift.Error>)
         
         case none
     }
