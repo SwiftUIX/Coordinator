@@ -27,7 +27,7 @@ public struct ViewTransition {
     var environmentBuilder: EnvironmentBuilder
     
     @usableFromInline
-    init<V: View>(payload: (EnvironmentalAnyView) -> ViewTransition.Payload, view: V) {
+    init<V: View>(payload: (AnyPresentationView) -> ViewTransition.Payload, view: V) {
         self.payload = payload(.init(view))
         self.payloadViewName = (view as? _opaque_NamedView)?.name
         self.payloadViewType = type(of: view)
@@ -102,7 +102,7 @@ extension ViewTransition: ViewTransitionContext {
     }
     
     @inlinable
-    public var view: EnvironmentalAnyView? {
+    public var view: AnyPresentationView? {
         finalize().view
     }
 }
@@ -216,7 +216,7 @@ extension ViewTransition {
 // MARK: - Helpers -
 
 extension ViewTransition.Payload {
-    mutating func mutateViewInPlace(_ body: (inout EnvironmentalAnyView) -> Void) {
+    mutating func mutateViewInPlace(_ body: (inout AnyPresentationView) -> Void) {
         switch self {
             case .linear(let transitions):
                 self = .linear(transitions.map({
@@ -238,7 +238,7 @@ extension ViewTransition.Payload {
 }
 
 extension ViewTransition {
-    mutating func mutateViewInPlace(_ body: (inout EnvironmentalAnyView) -> Void) {
+    mutating func mutateViewInPlace(_ body: (inout AnyPresentationView) -> Void) {
         switch payload {
             case .linear(let transitions):
                 payload = .linear(transitions.map({

@@ -132,7 +132,7 @@ extension UIViewController {
             }
 
             case .setRoot(let view): do {
-                if let viewController = self as? CocoaHostingController<EnvironmentalAnyView> {
+                if let viewController = self as? CocoaHostingController<AnyPresentationView> {
                     viewController.rootViewContent = view
                     
                     completion()
@@ -154,7 +154,7 @@ extension UIViewController {
                     window.rootViewController = CocoaHostingController(rootView: view)
                     
                     completion()
-                } else if let viewController = self as? CocoaHostingController<EnvironmentalAnyView> {
+                } else if let viewController = self as? CocoaHostingController<AnyPresentationView> {
                     viewController.rootViewContent = view
                     
                     completion()

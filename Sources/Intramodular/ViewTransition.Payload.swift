@@ -10,7 +10,7 @@ extension ViewTransition {
     @usableFromInline
     enum Payload {
         @usableFromInline
-        typealias View = EnvironmentalAnyView
+        typealias View = AnyPresentationView
         
         case present(View)
         case replace(with: View)
@@ -38,7 +38,7 @@ extension ViewTransition {
 
 extension ViewTransition.Payload {
     @usableFromInline
-    var view: EnvironmentalAnyView? {
+    var view: AnyPresentationView? {
         get {
             switch self {
                 case .present(let view):
