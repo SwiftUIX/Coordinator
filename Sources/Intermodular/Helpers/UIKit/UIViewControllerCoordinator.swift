@@ -9,20 +9,20 @@ import SwiftUIX
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
 open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, DynamicViewPresenter {
-    public var rootViewController: UIViewController
+    public var rootViewController: UIViewController?
     
     @inlinable
     open var presentationName: ViewName? {
-        rootViewController.presentationName
+        rootViewController?.presentationName
     }
     
     @inlinable
     open var presenter: DynamicViewPresenter? {
-        nil
+        rootViewController?.presenter
     }
     
     @inlinable
-    public init(rootViewController: UIViewController) {
+    public init(rootViewController: UIViewController?) {
         self.rootViewController = rootViewController
     }
     
@@ -39,9 +39,13 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
     
     @inlinable
     public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        transition(for: route)
-            .mergeEnvironmentBuilder(environmentBuilder)
-            .triggerPublisher(in: rootViewController, animated: true, coordinator: self)
+        do {
+            return transition(for: route)
+                .mergeEnvironmentBuilder(environmentBuilder)
+                .triggerPublisher(in: try rootViewController.unwrap(), animated: true, coordinator: self)
+        } catch {
+            return .failure(error)
+        }
     }
     
 }
@@ -49,24 +53,24 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
 extension UIViewControllerCoordinator {
     @inlinable
     final public var presented: DynamicViewPresentable? {
-        rootViewController.presented
+        rootViewController?.presented
     }
     
     @inlinable
     final public func present(_ presentation: AnyModalPresentation) {
-        rootViewController.present(presentation)
+        rootViewController?.present(presentation)
     }
     
     @discardableResult
     @inlinable
     final public func dismiss(withAnimation animation: Animation?) -> Future<Bool, Never> {
-        rootViewController.dismiss(withAnimation: animation)
+        rootViewController?.dismiss(withAnimation: animation) ?? .just(.success(false))
     }
     
     @discardableResult
     @inlinable
     final public func dismissSelf(withAnimation animation: Animation?) -> Future<Bool, Never> {
-        rootViewController.dismissSelf(withAnimation: animation)
+        rootViewController?.dismissSelf(withAnimation: animation) ?? .just(.success(false))
     }
 }
 
