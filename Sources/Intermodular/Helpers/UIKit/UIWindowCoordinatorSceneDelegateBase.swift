@@ -9,11 +9,7 @@ import SwiftUIX
 import UIKit
 
 open class UIWindowCoordinatorSceneDelegateBase<AppDelegate: UIApplicationDelegate, Coordinator: UIWindowCoordinatorProtocol>: UIResponder, UIWindowSceneDelegate {
-    open var coordinator: Coordinator?
-    
-    open var initialEnvironment: EnvironmentBuilder {
-        .init()
-    }
+    open var coordinator: Coordinator!
     
     open var initialRoute: Coordinator.Route? {
         return nil
@@ -29,11 +25,7 @@ open class UIWindowCoordinatorSceneDelegateBase<AppDelegate: UIApplicationDelega
             return
         }
         
-        let coordinator = Coordinator.init(window: UIWindow(windowScene: windowScene))
-        
-        self.coordinator = coordinator
-        
-        coordinator.mergeEnvironmentBuilder(initialEnvironment)
+        self.coordinator = Coordinator(window: UIWindow(windowScene: windowScene))
         
         if let initialRoute = initialRoute {
             coordinator.trigger(initialRoute)

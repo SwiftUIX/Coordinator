@@ -9,21 +9,21 @@ import SwiftUIX
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
 public protocol UIWindowCoordinatorProtocol: ViewCoordinator {
-    var window: UIWindow { get }
+    var window: UIWindow? { get }
     
-    init(window: UIWindow)
+    init(window: UIWindow?)
 }
 
 open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIWindowCoordinatorProtocol {
-    public var window: UIWindow
+    public var window: UIWindow?
     
     @inlinable
     open var presentationName: ViewName? {
-        window.presentationName
+        window?.presentationName
     }
     
     @inlinable
-    public required init(window: UIWindow) {
+    public required init(window: UIWindow?) {
         self.window = window
     }
     
@@ -41,11 +41,17 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
     @discardableResult
     @inlinable
     override public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        return transition(for: route)
-            .mergeEnvironmentBuilder(environmentBuilder)
-            .triggerPublisher(in: window, coordinator: self)
-            .handleSubscription({ _ in self.window.makeKeyAndVisible() })
-            .eraseToAnyPublisher()
+        do {
+            let window = try self.window.unwrap()
+            
+            return transition(for: route)
+                .mergeEnvironmentBuilder(environmentBuilder)
+                .triggerPublisher(in: window, coordinator: self)
+                .handleSubscription({ _ in window.makeKeyAndVisible() })
+                .eraseToAnyPublisher()
+        } catch {
+            return .failure(error)
+        }
     }
 }
 
@@ -54,27 +60,27 @@ extension UIWindowCoordinator: DynamicViewPresenter {
     open var presenter: DynamicViewPresenter? {
         nil
     }
-
+    
     @inlinable
     final public var presented: DynamicViewPresentable? {
-        window.presented
+        window?.presented
     }
     
     @inlinable
     final public func present(_ presentation: AnyModalPresentation) {
-        window.present(presentation)
+        window?.present(presentation)
     }
     
     @discardableResult
     @inlinable
     final public func dismiss(withAnimation animation: Animation?) -> Future<Bool, Never> {
-        window.dismiss(withAnimation: animation)
+        window?.dismiss(withAnimation: animation) ?? .just(.success(false))
     }
     
     @discardableResult
     @inlinable
     final public func dismissSelf(withAnimation animation: Animation?) -> Future<Bool, Never> {
-        window.dismissSelf(withAnimation: animation)
+        window?.dismissSelf(withAnimation: animation)  ?? .just(.success(false))
     }
 }
 
