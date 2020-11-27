@@ -29,7 +29,6 @@ public struct ViewTransition: ViewTransitionContext {
     @usableFromInline
     init<V: View>(payload: (AnyPresentationView) -> ViewTransition.Payload, view: V) {
         self.payload = payload(.init(view))
-        self.payloadViewName = (view as? _opaque_NamedView)?.name
         self.payloadViewType = type(of: view)
         self.environmentBuilder = .init()
     }
@@ -93,7 +92,7 @@ extension ViewTransition {
     }
 }
 
-// MARK: - Protocol Implementations -
+// MARK: - Protocol Conformances -
 
 // MARK: - API -
 

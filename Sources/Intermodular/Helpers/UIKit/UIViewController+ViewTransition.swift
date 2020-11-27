@@ -133,7 +133,7 @@ extension UIViewController {
             
             case .setRoot(let view): do {
                 if let viewController = self as? CocoaHostingController<AnyPresentationView> {
-                    viewController.rootViewContent = view
+                    viewController.rootView.content = view
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
@@ -155,7 +155,7 @@ extension UIViewController {
                     
                     completion()
                 } else if let viewController = self as? CocoaHostingController<AnyPresentationView> {
-                    viewController.rootViewContent = view
+                    viewController.rootView.content = view
                     
                     completion()
                 } else if topmostPresentedViewController != nil {
