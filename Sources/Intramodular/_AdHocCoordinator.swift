@@ -76,6 +76,8 @@ struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewController
     }
 }
 
+// MARK: - API -
+
 extension View {
     public func coordinate<Route: Hashable>(
         _: Route.Type,

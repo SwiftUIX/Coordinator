@@ -96,7 +96,7 @@ open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, View
         let publisher = triggerPublisher(for: route)
         let result = PassthroughSubject<ViewTransitionContext, Error>()
         
-        publisher.subscribe(result, storeIn: cancellables)
+        publisher.subscribe(result, in: cancellables)
         
         return result.eraseToAnyPublisher()
     }
