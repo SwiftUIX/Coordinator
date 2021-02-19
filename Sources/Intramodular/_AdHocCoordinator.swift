@@ -14,7 +14,7 @@ struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: UIViewCo
     
     func makeUIViewController(context: Context) -> some UIViewController {
         let viewController = CocoaHostingController(
-            rootView: AnyPresentationView(
+            mainView: AnyPresentationView(
                 rootView.environmentObject(AnyViewCoordinator(context.coordinator))
             )
         )
@@ -50,7 +50,7 @@ struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewController
     
     func makeUIViewController(context: Context) -> some UIViewController {
         let viewController = CocoaHostingController(
-            rootView: AnyPresentationView(
+            mainView: AnyPresentationView(
                 rootView.environmentObject(AnyViewCoordinator(context.coordinator))
             )
         )

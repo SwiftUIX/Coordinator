@@ -57,7 +57,7 @@ extension UIViewController {
                 }
                 
                 navigationController.pushViewController(
-                    CocoaHostingController(rootView: view),
+                    CocoaHostingController(mainView: view),
                     animated: animated
                 ) {
                     completion()
@@ -67,7 +67,7 @@ extension UIViewController {
             case .pushOrPresent(let view): do {
                 if let navigationController = topmostNavigationController {
                     navigationController.pushViewController(
-                        CocoaHostingController(rootView: view),
+                        CocoaHostingController(mainView: view),
                         animated: animated
                     ) {
                         completion()
@@ -137,7 +137,7 @@ extension UIViewController {
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
-                    window.rootViewController = CocoaHostingController(rootView: view)
+                    window.rootViewController = CocoaHostingController(mainView: view)
                     
                     completion()
                 } else {
@@ -147,11 +147,11 @@ extension UIViewController {
             
             case .set(let view): do {
                 if let viewController = topmostNavigationController {
-                    viewController.setViewControllers([CocoaHostingController(rootView: view)], animated: animated)
+                    viewController.setViewControllers([CocoaHostingController(mainView: view)], animated: animated)
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
-                    window.rootViewController = CocoaHostingController(rootView: view)
+                    window.rootViewController = CocoaHostingController(mainView: view)
                     
                     completion()
                 } else if let viewController = self as? CocoaHostingController<AnyPresentationView> {
@@ -175,11 +175,11 @@ extension UIViewController {
                         }
                     }
                 } else if let viewController = topmostNavigationController {
-                    viewController.setViewControllers([CocoaHostingController(rootView: view)], animated: animated)
+                    viewController.setViewControllers([CocoaHostingController(mainView: view)], animated: animated)
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
-                    window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(rootView: view))
+                    window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(mainView: view))
                     
                     completion()
                 }

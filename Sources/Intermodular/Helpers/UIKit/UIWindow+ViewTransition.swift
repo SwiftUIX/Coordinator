@@ -23,11 +23,11 @@ extension ViewTransition {
         return Future { attemptToFulfill in
             switch transition.finalize() {
                 case .set(let view): do {
-                    window.rootViewController = CocoaHostingController(rootView: view)
+                    window.rootViewController = CocoaHostingController(mainView: view)
                 }
                 
                 case .setNavigatable(let view): do {
-                    window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(rootView: view))
+                    window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(mainView: view))
                 }
                 
                 default: do {
