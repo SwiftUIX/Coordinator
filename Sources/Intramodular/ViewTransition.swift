@@ -92,7 +92,7 @@ extension ViewTransition {
     }
 }
 
-// MARK: - Protocol Conformances -
+// MARK: - Conformances -
 
 // MARK: - API -
 

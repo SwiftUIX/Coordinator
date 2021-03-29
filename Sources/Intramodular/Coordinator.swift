@@ -38,3 +38,9 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
         
     }
 }
+
+extension View {
+    public func coordinator<C: ViewCoordinator>(_ coordinator: C) -> some View {
+        environmentObject(coordinator)
+    }
+}

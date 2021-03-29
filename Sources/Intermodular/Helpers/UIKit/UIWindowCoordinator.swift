@@ -53,6 +53,12 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
             return .failure(error)
         }
     }
+    
+    @discardableResult
+    @inlinable
+    override public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
+        super.trigger(route)
+    }
 }
 
 extension UIWindowCoordinator: DynamicViewPresenter {
