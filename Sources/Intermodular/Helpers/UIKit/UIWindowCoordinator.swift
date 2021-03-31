@@ -23,7 +23,7 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
     }
     
     @inlinable
-    public required init(window: UIWindow?) {
+    public required init(window: UIWindow? = nil) {
         self.window = window
     }
     

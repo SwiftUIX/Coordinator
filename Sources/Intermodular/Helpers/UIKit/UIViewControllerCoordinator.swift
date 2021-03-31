@@ -22,7 +22,7 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
     }
     
     @inlinable
-    public init(rootViewController: UIViewController?) {
+    public init(rootViewController: UIViewController? = nil) {
         self.rootViewController = rootViewController
     }
     

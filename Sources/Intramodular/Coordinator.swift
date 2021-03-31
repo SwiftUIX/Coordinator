@@ -32,6 +32,10 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
         
     }
     
+    public init<Route>(for route: Route.Type) where WrappedValue == AnyViewCoordinator<Route> {
+        
+    }
+    
     public init<Route: Hashable>(
         _: Route.Type
     ) where WrappedValue == AnyViewCoordinator<Route> {
@@ -40,7 +44,33 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
 }
 
 extension View {
-    public func coordinator<C: ViewCoordinator>(_ coordinator: C) -> some View {
+    #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+    public func coordinator<C: UIViewControllerCoordinator<Route>, Route>(
+        _ coordinator: C
+    ) -> some View {
         environmentObject(coordinator)
+            .environmentObject(AnyViewCoordinator(coordinator))
+            .background(
+                onAppKitOrUIKitViewControllerResolution {
+                    if coordinator.rootViewController == nil {
+                        coordinator.rootViewController = $0
+                    }
+                }
+            )
     }
+    
+    public func coordinator<C: UIWindowCoordinator<Route>, Route>(
+        _ coordinator: C
+    ) -> some View {
+        environmentObject(coordinator)
+            .environmentObject(AnyViewCoordinator(coordinator))
+            .background(
+                onAppKitOrUIKitViewControllerResolution {
+                    if coordinator.window == nil {
+                        coordinator.window = $0.view.window
+                    }
+                }
+            )
+    }
+    #endif
 }
