@@ -11,6 +11,10 @@ import SwiftUIX
 open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, DynamicViewPresenter {
     public var rootViewController: UIViewController?
     
+    public var _cocoaPresentationCoordinator: CocoaPresentationCoordinator {
+        .init()
+    }
+
     @inlinable
     open var presentationName: ViewName? {
         rootViewController?.presentationName
@@ -57,8 +61,8 @@ extension UIViewControllerCoordinator {
     }
     
     @inlinable
-    final public func present(_ presentation: AnyModalPresentation) {
-        rootViewController?.present(presentation)
+    final public func present(_ presentation: AnyModalPresentation, completion: () -> Void) {
+        rootViewController?.present(presentation, completion: completion)
     }
     
     @discardableResult

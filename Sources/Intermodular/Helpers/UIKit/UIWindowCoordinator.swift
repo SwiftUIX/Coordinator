@@ -17,6 +17,10 @@ public protocol UIWindowCoordinatorProtocol: ViewCoordinator {
 open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIWindowCoordinatorProtocol {
     public var window: UIWindow?
     
+    public var _cocoaPresentationCoordinator: CocoaPresentationCoordinator {
+        window?._cocoaPresentationCoordinator ?? .init()
+    }
+
     @inlinable
     open var presentationName: ViewName? {
         window?.presentationName
@@ -61,7 +65,7 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
     }
 }
 
-extension UIWindowCoordinator: DynamicViewPresenter {
+extension UIWindowCoordinator: DynamicViewPresenter {    
     @inlinable
     open var presenter: DynamicViewPresenter? {
         nil
@@ -73,8 +77,8 @@ extension UIWindowCoordinator: DynamicViewPresenter {
     }
     
     @inlinable
-    final public func present(_ presentation: AnyModalPresentation) {
-        window?.present(presentation)
+    final public func present(_ presentation: AnyModalPresentation, completion: () -> Void) {
+        window?.present(presentation, completion: completion)
     }
     
     @discardableResult
