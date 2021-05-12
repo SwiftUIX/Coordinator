@@ -23,7 +23,39 @@ open class OpaqueBaseViewCoordinator {
     }
     
     func becomeChild(of parent: OpaqueBaseViewCoordinator) {
-        
+        update(withParent: parent)
+    }
+    
+    func update(withParent parent: OpaqueBaseViewCoordinator) {
+        if let parent = parent as? _opaque_UIWindowCoordinator {
+            if let self = self as? _opaque_UIWindowCoordinator {
+                if self.window == nil {
+                    self.window = parent.window
+                }
+            } else if let self = self as? _opaque_UIViewControllerCoordinator {
+                if self.rootViewController == nil {
+                    self.rootViewController = parent.window?.rootViewController
+                }
+            }
+        } else if let parent = parent as? _opaque_UIViewControllerCoordinator {
+            if let self = self as? _opaque_UIWindowCoordinator {
+                if self.window == nil {
+                    self.window = parent.rootViewController?.view.window
+                }
+            } else if let self = self as? _opaque_UIViewControllerCoordinator {
+                if self.rootViewController == nil {
+                    self.rootViewController = parent.rootViewController
+                }
+            }
+        }
+    }
+    
+    func updateAllChildren() {
+        for child in children {
+            if let coordinator = child as? OpaqueBaseViewCoordinator {
+                coordinator.update(withParent: self)
+            }
+        }
     }
 }
 

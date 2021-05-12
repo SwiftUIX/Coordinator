@@ -8,30 +8,37 @@ import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
-public protocol UIWindowCoordinatorProtocol: ViewCoordinator {
-    var window: UIWindow? { get }
+public protocol _opaque_UIWindowCoordinator: AnyObject {
+    var window: UIWindow? { get set }
     
     init(window: UIWindow?)
 }
 
-open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIWindowCoordinatorProtocol {
-    public var window: UIWindow?
+public protocol UIWindowCoordinatorProtocol: _opaque_UIWindowCoordinator, ViewCoordinator {
+    var window: UIWindow? { get set }
+    
+    init(window: UIWindow?)
+}
+
+open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _opaque_UIWindowCoordinator {
+    @Published public var window: UIWindow? {
+        didSet {
+            updateAllChildren()
+        }
+    }
     
     public var _cocoaPresentationCoordinator: CocoaPresentationCoordinator {
         window?._cocoaPresentationCoordinator ?? .init()
     }
-
-    @inlinable
+    
     open var presentationName: ViewName? {
         window?.presentationName
     }
     
-    @inlinable
     public required init(window: UIWindow? = nil) {
         self.window = window
     }
     
-    @inlinable
     convenience public init<Route: Hashable>(parent: UIWindowCoordinator<Route>) {
         self.init(window: parent.window)
         
@@ -43,7 +50,6 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
     }
     
     @discardableResult
-    @inlinable
     override public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         do {
             let window = try self.window.unwrap()
@@ -51,6 +57,9 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
             return transition(for: route)
                 .mergeEnvironmentBuilder(environmentBuilder)
                 .triggerPublisher(in: window, coordinator: self)
+                .then { [weak self] in
+                    self?.updateAllChildren()
+                }
                 .handleSubscription({ _ in window.makeKeyAndVisible() })
                 .eraseToAnyPublisher()
         } catch {
@@ -59,13 +68,12 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, UIW
     }
     
     @discardableResult
-    @inlinable
     override public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         super.trigger(route)
     }
 }
 
-extension UIWindowCoordinator: DynamicViewPresenter {    
+extension UIWindowCoordinator: DynamicViewPresenter {
     @inlinable
     open var presenter: DynamicViewPresenter? {
         nil

@@ -8,13 +8,29 @@ import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
-open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, DynamicViewPresenter {
-    public var rootViewController: UIViewController?
+public protocol _opaque_UIViewControllerCoordinator: AnyObject {
+    var rootViewController: UIViewController? { get set }
+    
+    init(rootViewController: UIViewController?)
+}
+
+public protocol UIViewControllerCoordinatorProtocol: _opaque_UIViewControllerCoordinator, ViewCoordinator {
+    var rootViewController: UIViewController? { get set }
+    
+    init(rootViewController: UIViewController?)
+}
+
+open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
+    @Published public var rootViewController: UIViewController? {
+        didSet {
+            updateAllChildren()
+        }
+    }
     
     public var _cocoaPresentationCoordinator: CocoaPresentationCoordinator {
-        .init()
+        rootViewController?._cocoaPresentationCoordinator ?? .init()
     }
-
+    
     @inlinable
     open var presentationName: ViewName? {
         rootViewController?.presentationName
@@ -26,7 +42,7 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
     }
     
     @inlinable
-    public init(rootViewController: UIViewController? = nil) {
+    public required init(rootViewController: UIViewController? = nil) {
         self.rootViewController = rootViewController
     }
     
@@ -41,12 +57,15 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
         fatalError()
     }
     
-    @inlinable
     public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         do {
             return transition(for: route)
                 .mergeEnvironmentBuilder(environmentBuilder)
                 .triggerPublisher(in: try rootViewController.unwrap(), animated: true, coordinator: self)
+                .then { [weak self] in
+                    self?.updateAllChildren()
+                }
+                .eraseToAnyPublisher()
         } catch {
             return .failure(error)
         }

@@ -24,10 +24,14 @@ extension ViewTransition {
             switch transition.finalize() {
                 case .set(let view): do {
                     window.rootViewController = CocoaHostingController(mainView: view)
+                    
+                    attemptToFulfill(.success(self))
                 }
                 
                 case .setNavigatable(let view): do {
                     window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(mainView: view))
+                    
+                    attemptToFulfill(.success(self))
                 }
                 
                 default: do {
