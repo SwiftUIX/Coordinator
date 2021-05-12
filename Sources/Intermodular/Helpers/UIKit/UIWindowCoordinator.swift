@@ -77,7 +77,7 @@ extension UIWindowCoordinator: DynamicViewPresenter {
     }
     
     @inlinable
-    final public func present(_ presentation: AnyModalPresentation, completion: () -> Void) {
+    final public func present(_ presentation: AnyModalPresentation, completion: @escaping () -> Void) {
         window?.present(presentation, completion: completion)
     }
     

@@ -61,7 +61,7 @@ extension UIViewControllerCoordinator {
     }
     
     @inlinable
-    final public func present(_ presentation: AnyModalPresentation, completion: () -> Void) {
+    final public func present(_ presentation: AnyModalPresentation, completion: @escaping () -> Void) {
         rootViewController?.present(presentation, completion: completion)
     }
     
