@@ -27,6 +27,7 @@ open class OpaqueBaseViewCoordinator {
     }
     
     func update(withParent parent: OpaqueBaseViewCoordinator) {
+        #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
         if let parent = parent as? _opaque_UIWindowCoordinator {
             if let self = self as? _opaque_UIWindowCoordinator {
                 if self.window == nil {
@@ -48,6 +49,7 @@ open class OpaqueBaseViewCoordinator {
                 }
             }
         }
+        #endif
     }
     
     func updateAllChildren() {
