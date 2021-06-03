@@ -57,7 +57,7 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _op
             return transition(for: route)
                 .mergeEnvironmentBuilder(environmentBuilder)
                 .triggerPublisher(in: window, coordinator: self)
-                .then { [weak self] in
+                .handleOutput { [weak self] _ in
                     self?.updateAllChildren()
                 }
                 .handleSubscription({ _ in window.makeKeyAndVisible() })

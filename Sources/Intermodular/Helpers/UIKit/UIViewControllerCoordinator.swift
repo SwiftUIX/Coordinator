@@ -62,7 +62,7 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
             return transition(for: route)
                 .mergeEnvironmentBuilder(environmentBuilder)
                 .triggerPublisher(in: try rootViewController.unwrap(), animated: true, coordinator: self)
-                .then { [weak self] in
+                .handleOutput { [weak self] _ in
                     self?.updateAllChildren()
                 }
                 .eraseToAnyPublisher()
