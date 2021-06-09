@@ -6,7 +6,7 @@ import Merge
 import SwiftUIX
 
 protocol _opaque_AnyViewCoordinator {
-    func _setViewController(_ viewController: UIViewController)
+    func _setViewController(_ viewController: AppKitOrUIKitViewController)
 }
 
 public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinator, ViewCoordinator {
@@ -46,7 +46,8 @@ public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinat
         triggerImpl(route)
     }
     
-    func _setViewController(_ viewController: UIViewController) {
+    func _setViewController(_ viewController: AppKitOrUIKitViewController) {
+        #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
         if let base = base as? _opaque_UIViewControllerCoordinator {
             if base.rootViewController == nil {
                 base.rootViewController = viewController
@@ -58,6 +59,7 @@ public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinat
         } else if let base = base as? _opaque_AnyViewCoordinator {
             base._setViewController(viewController)
         }
+        #endif
     }
 }
 
