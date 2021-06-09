@@ -52,7 +52,7 @@ extension UIViewController {
             }
             
             case .push(let view): do {
-                guard let navigationController = topmostNavigationController else {
+                guard let navigationController = nearestNavigationController else {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
                 
@@ -65,7 +65,7 @@ extension UIViewController {
             }
             
             case .pushOrPresent(let view): do {
-                if let navigationController = topmostNavigationController {
+                if let navigationController = nearestNavigationController {
                     navigationController.pushViewController(
                         CocoaHostingController(mainView: view),
                         animated: animated
@@ -80,7 +80,7 @@ extension UIViewController {
             }
             
             case .pop: do {
-                guard let viewController = topmostNavigationController else {
+                guard let viewController = nearestNavigationController else {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
                 
@@ -90,7 +90,7 @@ extension UIViewController {
             }
             
             case .popToRoot: do {
-                guard let viewController = topmostNavigationController else {
+                guard let viewController = nearestNavigationController else {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
                 
@@ -100,7 +100,7 @@ extension UIViewController {
             }
             
             case .popOrDismiss: do {
-                if let navigationController = topmostNavigationController, navigationController.viewControllers.count > 1 {
+                if let navigationController = nearestNavigationController, navigationController.viewControllers.count > 1 {
                     navigationController.popViewController(animated: animated) {
                         completion()
                     }
@@ -116,7 +116,7 @@ extension UIViewController {
             }
             
             case .popToRootOrDismiss: do {
-                if let navigationController = topmostNavigationController, navigationController.viewControllers.count > 1 {
+                if let navigationController = nearestNavigationController, navigationController.viewControllers.count > 1 {
                     navigationController.popToRootViewController(animated: animated) {
                         completion()
                     }
@@ -146,7 +146,7 @@ extension UIViewController {
             }
             
             case .set(let view): do {
-                if let viewController = topmostNavigationController {
+                if let viewController = nearestNavigationController {
                     viewController.setViewControllers([CocoaHostingController(mainView: view)], animated: animated)
                     
                     completion()
@@ -174,7 +174,7 @@ extension UIViewController {
                             completion()
                         }
                     }
-                } else if let viewController = topmostNavigationController {
+                } else if let viewController = nearestNavigationController {
                     viewController.setViewControllers([CocoaHostingController(mainView: view)], animated: animated)
                     
                     completion()

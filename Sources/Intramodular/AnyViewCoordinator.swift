@@ -5,7 +5,11 @@
 import Merge
 import SwiftUIX
 
-public final class AnyViewCoordinator<Route: Hashable>: ViewCoordinator {
+protocol _opaque_AnyViewCoordinator {
+    func _setViewController(_ viewController: UIViewController)
+}
+
+public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinator, ViewCoordinator {
     public let base: EnvironmentProvider
     
     public var environmentBuilder: EnvironmentBuilder {
@@ -40,6 +44,20 @@ public final class AnyViewCoordinator<Route: Hashable>: ViewCoordinator {
     @discardableResult
     public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         triggerImpl(route)
+    }
+    
+    func _setViewController(_ viewController: UIViewController) {
+        if let base = base as? _opaque_UIViewControllerCoordinator {
+            if base.rootViewController == nil {
+                base.rootViewController = viewController
+            }
+        } else if let base = base as? _opaque_UIWindowCoordinator {
+            if base.window == nil {
+                base.window = viewController.view.window
+            }
+        } else if let base = base as? _opaque_AnyViewCoordinator {
+            base._setViewController(viewController)
+        }
     }
 }
 

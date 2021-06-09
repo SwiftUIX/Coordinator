@@ -11,16 +11,19 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
     
     @OptionalEnvironmentObject public var _wrappedValue0: WrappedValue?
     @OptionalEnvironmentObject public var _wrappedValue1: AnyViewCoordinator<WrappedValue.Route>?
-    
+        
     @inline(never)
     public var wrappedValue: WrappedValue {
         let result: Any? = nil
             ?? _wrappedValue0
             ?? _wrappedValue1?.base
             ?? OpaqueBaseViewCoordinator
-            ._runtimeLookup[ObjectIdentifier(WrappedValue.self)]!
-            .takeUnretainedValue()
-        
+            ._runtimeLookup[ObjectIdentifier(WrappedValue.self)]?.takeUnretainedValue()
+
+        guard let result = result else {
+            fatalError("Could not resolve a coordinator for \(String(describing: WrappedValue.Route.self)) in the view hierarchy. Try adding `.coordinator(myCoordinator)` in your view hierarchy.")
+        }
+
         if let result = result as? EnvironmentProvider {
             result.environmentBuilder.merge(environmentBuilder)
         }
@@ -33,13 +36,13 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
     }
     
     public init<Route>(for route: Route.Type) where WrappedValue == AnyViewCoordinator<Route> {
-        
+
     }
     
     public init<Route: Hashable>(
-        _: Route.Type
+        _ route: Route.Type
     ) where WrappedValue == AnyViewCoordinator<Route> {
-        
+
     }
 }
 
@@ -50,13 +53,12 @@ extension View {
     ) -> some View {
         environmentObject(coordinator)
             .environmentObject(AnyViewCoordinator(coordinator))
-            .background(
-                onAppKitOrUIKitViewControllerResolution {
-                    if coordinator.rootViewController == nil {
-                        coordinator.rootViewController = $0
-                    }
+            .onAppKitOrUIKitViewControllerResolution {
+                if coordinator.rootViewController == nil {
+                    coordinator.rootViewController = $0
                 }
-            )
+            }
+
     }
     
     public func coordinator<C: UIWindowCoordinator<Route>, Route>(
@@ -64,13 +66,21 @@ extension View {
     ) -> some View {
         environmentObject(coordinator)
             .environmentObject(AnyViewCoordinator(coordinator))
-            .background(
-                onAppKitOrUIKitViewControllerResolution {
-                    if coordinator.window == nil {
-                        coordinator.window = $0.view.window
-                    }
+            .onAppKitOrUIKitViewControllerResolution {
+                if coordinator.window == nil {
+                    coordinator.window = $0.view.window
                 }
-            )
+            }
+    }
+    
+    public func coordinator<C: ViewCoordinator>(
+        _ coordinator: C
+    ) -> some View {
+        environmentObject(coordinator)
+            .environmentObject((coordinator as? AnyViewCoordinator<C.Route>) ?? AnyViewCoordinator(coordinator))
+            .onAppKitOrUIKitViewControllerResolution {
+                AnyViewCoordinator(coordinator)._setViewController($0)
+            }
     }
     #endif
 }
