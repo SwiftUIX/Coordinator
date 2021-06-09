@@ -26,18 +26,33 @@ extension UINavigationController {
         animated: Bool,
         completion: (() -> Void)?
     ) {
-        popViewController(animated: animated)
-        
-        guard let completion = completion else {
-            return
+        guard animated else {
+            popViewController(animated: false)
+
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+                completion?()
+            }
         }
         
-        guard animated, let coordinator = transitionCoordinator else {
-            return DispatchQueue.main.async(execute: { completion() })
-        }
-        
-        coordinator.animate(alongsideTransition: nil) { _ in
-            completion()
+        if let coordinator = transitionCoordinator {
+            popViewController(animated: animated)
+
+            coordinator.animate(alongsideTransition: nil) { _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+                    completion?()
+                }
+            }
+        } else {
+            CATransaction.begin()
+            CATransaction.setCompletionBlock {
+                DispatchQueue.main.async {
+                    completion?()
+                }
+            }
+            
+            popViewController(animated: animated)
+            
+            CATransaction.commit()
         }
     }
     
