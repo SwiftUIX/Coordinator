@@ -24,7 +24,7 @@ enum AppDestination {
 
 There are three steps to defining a coordinator:
 
-1. You must subclass either `UIViewControllerCoordinator` or `UIViewControllerCoordinator`
+1. You must subclass either `UIViewControllerCoordinator` or `UIWindowCoordinator`
 2. You must parametrize your subclass with a **route**.
 3. You must override and implement the function `transition(for:)`, which is responsible for mapping a **route** to a **transition**.
 
