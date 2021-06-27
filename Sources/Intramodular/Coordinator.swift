@@ -39,7 +39,7 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
 
     }
     
-    public init<Route: Hashable>(
+    public init<Route>(
         _ route: Route.Type
     ) where WrappedValue == AnyViewCoordinator<Route> {
 
