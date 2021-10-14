@@ -218,7 +218,7 @@ extension UIViewController {
     
     public func presentOnTop<V: View>(
         _ view: V,
-        named viewName: ViewName?,
+        named viewName: AnyHashable?,
         animated: Bool,
         completion: @escaping () -> Void
     ) {

@@ -12,7 +12,7 @@ extension ViewTransition {
         case present(AnyPresentationView)
         case replace(with: AnyPresentationView)
         case dismiss
-        case dismissView(named: ViewName)
+        case dismissView(named: AnyHashable)
         
         case push(AnyPresentationView)
         case pushOrPresent(AnyPresentationView)

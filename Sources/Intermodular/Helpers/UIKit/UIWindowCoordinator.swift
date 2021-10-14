@@ -31,7 +31,7 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _op
         window?._cocoaPresentationCoordinator ?? .init()
     }
     
-    open var presentationName: ViewName? {
+    open var presentationName: AnyHashable? {
         window?.presentationName
     }
     

@@ -20,7 +20,7 @@ public struct ViewTransition: ViewTransitionContext {
     @usableFromInline
     var animated: Bool = true
     @usableFromInline
-    var payloadViewName: ViewName?
+    var payloadViewName: AnyHashable?
     @usableFromInline
     var payloadViewType: Any.Type?
     @usableFromInline

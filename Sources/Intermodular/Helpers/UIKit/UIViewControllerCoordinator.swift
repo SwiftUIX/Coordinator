@@ -32,7 +32,7 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
     }
     
     @inlinable
-    open var presentationName: ViewName? {
+    open var presentationName: AnyHashable? {
         rootViewController?.presentationName
     }
     
