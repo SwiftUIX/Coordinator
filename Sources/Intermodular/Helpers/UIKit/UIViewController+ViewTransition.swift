@@ -166,25 +166,7 @@ extension UIViewController {
                     }
                 }
             }
-            
-            case .setNavigatable(let view): do {
-                if topmostPresentedViewController != nil {
-                    dismiss(animated: animated) {
-                        self.presentOnTop(view, named: transition.payloadViewName, animated: animated) {
-                            completion()
-                        }
-                    }
-                } else if let viewController = nearestNavigationController {
-                    viewController.setViewControllers([CocoaHostingController(mainView: view)], animated: animated)
-                    
-                    completion()
-                } else if let window = self.view.window, window.rootViewController === self {
-                    window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(mainView: view))
-                    
-                    completion()
-                }
-            }
-            
+                        
             case .linear(var transitions): do {
                 guard !transitions.isEmpty else {
                     return completion()
@@ -216,13 +198,14 @@ extension UIViewController {
         }
     }
     
-    public func presentOnTop<V: View>(
-        _ view: V,
+    @usableFromInline
+    func presentOnTop(
+        _ view: AnyPresentationView,
         named viewName: AnyHashable?,
         animated: Bool,
         completion: @escaping () -> Void
     ) {
-        topmostViewController.present(view, named: viewName, completion: completion)
+        topmostViewController.present(view)
     }
 }
 

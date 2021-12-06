@@ -27,10 +27,15 @@ public struct ViewTransition: ViewTransitionContext {
     var environmentBuilder: EnvironmentBuilder
     
     @usableFromInline
-    init<V: View>(payload: (AnyPresentationView) -> ViewTransition.Payload, view: V) {
-        self.payload = payload(.init(view))
+    init(payload: (AnyPresentationView) -> ViewTransition.Payload, view: AnyPresentationView) {
+        self.payload = payload(view)
         self.payloadViewType = type(of: view)
         self.environmentBuilder = .init()
+    }
+
+    @usableFromInline
+    init<V: View>(payload: (AnyPresentationView) -> ViewTransition.Payload, view: V) {
+        self.init(payload: payload, view: .init(view))
     }
     
     @usableFromInline
@@ -80,8 +85,6 @@ extension ViewTransition {
                 return nil
             case .setRoot:
                 return nil
-            case .setNavigatable:
-                return nil
             case .linear:
                 return nil
             case .dynamic:
@@ -94,6 +97,43 @@ extension ViewTransition {
 
 // MARK: - Conformances -
 
+extension ViewTransition: CustomStringConvertible {
+    public var description: String {
+        switch payload {
+            case .present:
+                return "Present"
+            case .replace:
+                return "Replace"
+            case .dismiss:
+                return "Dismiss"
+            case .dismissView(let name):
+                return "Dismiss \(name)"
+            case .push:
+                return "Push"
+            case .pushOrPresent:
+                return "Push or present"
+            case .pop:
+                return "Pop"
+            case .popToRoot:
+                return "Pop to root"
+            case .popOrDismiss:
+                return "Pop or dismiss"
+            case .popToRootOrDismiss:
+                return "Pop to root or dismiss"
+            case .set:
+                return "Set"
+            case .setRoot:
+                return "Set root"
+            case .linear:
+                return "Linear"
+            case .dynamic:
+                return "Dynamic"
+            case .none:
+                return "None"
+        }
+    }
+}
+
 // MARK: - API -
 
 extension ViewTransition {
@@ -103,10 +143,20 @@ extension ViewTransition {
     }
     
     @inlinable
+    public static func present(_ view: AnyPresentationView) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.present, view: view)
+    }
+    
+    @inlinable
     public static func replace<V: View>(with view: V) -> ViewTransition {
         .init(payload: ViewTransition.Payload.replace, view: view)
     }
     
+    @inlinable
+    public static func replace(with view: AnyPresentationView) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.replace, view: view)
+    }
+
     @inlinable
     public static var dismiss: ViewTransition {
         .init(payload: .dismiss)
@@ -123,7 +173,17 @@ extension ViewTransition {
     }
     
     @inlinable
+    public static func push(_ view: AnyPresentationView) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.push, view: view)
+    }
+    
+    @inlinable
     public static func pushOrPresent<V: View>(_ view: V) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.pushOrPresent, view: view)
+    }
+    
+    @inlinable
+    public static func pushOrPresent(_ view: AnyPresentationView) -> ViewTransition {
         .init(payload: ViewTransition.Payload.pushOrPresent, view: view)
     }
     
@@ -153,13 +213,18 @@ extension ViewTransition {
     }
     
     @inlinable
+    public static func set(_ view: AnyPresentationView) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.set, view: view)
+    }
+    
+    @inlinable
     public static func setRoot<V: View>(_ view: V) -> ViewTransition {
         .init(payload: ViewTransition.Payload.setRoot, view: view)
     }
     
     @inlinable
-    public static func setNavigatable<V: View>(_ view: V) -> ViewTransition {
-        .init(payload: ViewTransition.Payload.setNavigatable, view: view)
+    public static func setRoot(_ view: AnyPresentationView) -> ViewTransition {
+        .init(payload: ViewTransition.Payload.setRoot, view: view)
     }
     
     @inlinable

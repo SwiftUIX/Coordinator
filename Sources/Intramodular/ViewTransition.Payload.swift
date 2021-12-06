@@ -23,7 +23,6 @@ extension ViewTransition {
         
         case set(AnyPresentationView)
         case setRoot(AnyPresentationView)
-        case setNavigatable(AnyPresentationView)
         
         case linear([ViewTransition])
         
@@ -62,8 +61,6 @@ extension ViewTransition.Payload {
                     return view
                 case .setRoot(let view):
                     return view
-                case .setNavigatable(let view):
-                    return view
                 case .linear:
                     return nil
                 case .dynamic:
@@ -101,8 +98,6 @@ extension ViewTransition.Payload {
                     self = .set(newValue)
                 case .setRoot:
                     self = .setRoot(newValue)
-                case .setNavigatable:
-                    self = .setNavigatable(newValue)
                 case .linear:
                     break
                 case .dynamic:

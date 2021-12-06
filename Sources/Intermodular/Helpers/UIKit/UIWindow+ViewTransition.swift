@@ -28,12 +28,6 @@ extension ViewTransition {
                     attemptToFulfill(.success(self))
                 }
                 
-                case .setNavigatable(let view): do {
-                    window.rootViewController = UINavigationController(rootViewController: CocoaHostingController(mainView: view))
-                    
-                    attemptToFulfill(.success(self))
-                }
-                
                 default: do {
                     do {
                         try window.rootViewController!.trigger(transition, animated: animated) {
