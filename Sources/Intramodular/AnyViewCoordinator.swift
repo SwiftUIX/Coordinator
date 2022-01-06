@@ -62,25 +62,3 @@ public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinat
         #endif
     }
 }
-
-public class EmptyViewCoordinator: ViewCoordinator {
-    public typealias Route = Never
-    
-    public var environmentBuilder = EnvironmentBuilder()
-    
-    public init() {
-        
-    }
-    
-    public func transition(for: Never) -> ViewTransition {
-        
-    }
-    
-    public func triggerPublisher(for _: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        
-    }
-    
-    public func trigger(_ : Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        
-    }
-}

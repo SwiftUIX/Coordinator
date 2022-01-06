@@ -32,7 +32,7 @@ public struct ViewTransition: ViewTransitionContext {
         self.payloadViewType = type(of: view)
         self.environmentBuilder = .init()
     }
-
+    
     @usableFromInline
     init<V: View>(payload: (AnyPresentationView) -> ViewTransition.Payload, view: V) {
         self.init(payload: payload, view: .init(view))
@@ -156,7 +156,7 @@ extension ViewTransition {
     public static func replace(with view: AnyPresentationView) -> ViewTransition {
         .init(payload: ViewTransition.Payload.replace, view: view)
     }
-
+    
     @inlinable
     public static var dismiss: ViewTransition {
         .init(payload: .dismiss)

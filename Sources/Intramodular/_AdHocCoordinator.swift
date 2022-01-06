@@ -85,13 +85,6 @@ extension View {
     ) -> some View {
         _AdHocViewControllerCoordinator(rootView: self, transitionImpl: transition)
     }
-    
-    public func coordinateWindow<Route: Hashable>(
-        _: Route.Type,
-        transition: @escaping (Route) -> ViewTransition
-    ) -> some View {
-        _AdHocViewControllerCoordinator(rootView: self, transitionImpl: transition)
-    }
 }
 
 #endif
