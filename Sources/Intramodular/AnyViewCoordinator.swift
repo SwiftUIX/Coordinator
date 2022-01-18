@@ -6,7 +6,7 @@ import Merge
 import SwiftUIX
 
 protocol _opaque_AnyViewCoordinator {
-    #if os(iOS)
+    #if os(iOS) || os(macOS) || os(tvOS)
     func _setViewController(_ viewController: AppKitOrUIKitViewController)
     #endif
 }
