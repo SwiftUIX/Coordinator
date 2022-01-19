@@ -48,8 +48,9 @@ public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinat
         triggerImpl(route)
     }
 
-    #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+    #if os(iOS) || os(macOS) || os(tvOS)
     func _setViewController(_ viewController: AppKitOrUIKitViewController) {
+        #if os(iOS) || os(tvOS)
         if let base = base as? _opaque_UIViewControllerCoordinator {
             if base.rootViewController == nil {
                 base.rootViewController = viewController
@@ -61,6 +62,9 @@ public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinat
         } else if let base = base as? _opaque_AnyViewCoordinator {
             base._setViewController(viewController)
         }
+        #else
+        fatalError("unimplemented")
+        #endif
     }
     #endif
 }
