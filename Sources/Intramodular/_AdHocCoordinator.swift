@@ -7,8 +7,6 @@ import SwiftUIX
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
 struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: UIViewControllerRepresentable {
-    @Environment(\._appKitOrUIKitViewController) var _appKitOrUIKitViewController
-    
     let rootView: Content
     let transitionImpl: (Route) -> ViewTransition
     
@@ -42,9 +40,7 @@ struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: UIViewCo
     }
 }
 
-struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewControllerRepresentable {
-    @Environment(\._appKitOrUIKitViewController) var _appKitOrUIKitViewController
-    
+struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewControllerRepresentable {    
     let rootView: Content
     let transitionImpl: (Route) -> ViewTransition
     
