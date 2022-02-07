@@ -87,7 +87,7 @@ extension ViewTransition {
                 return nil
             case .linear:
                 return nil
-            case .dynamic:
+            case .custom:
                 return nil
             case .none:
                 return ViewTransition.none
@@ -126,8 +126,8 @@ extension ViewTransition: CustomStringConvertible {
                 return "Set root"
             case .linear:
                 return "Linear"
-            case .dynamic:
-                return "Dynamic"
+            case .custom:
+                return "Custom"
             case .none:
                 return "None"
         }
@@ -238,26 +238,33 @@ extension ViewTransition {
     }
     
     @inlinable
-    internal static func dynamic(
+    internal static func custom(
         _ body: @escaping () -> AnyPublisher<ViewTransitionContext, Swift.Error>
     ) -> ViewTransition {
-        .init(payload: .dynamic(body))
+        .init(payload: .custom(body))
     }
 
-    public static func dynamic(
+    @available(*, deprecated, renamed: "custom")
+    internal static func dynamic(
+        _ body: @escaping () -> Void
+    ) -> ViewTransition {
+        .custom(body)
+    }
+
+    public static func custom(
         _ body: @escaping () -> Void
     ) -> ViewTransition {
         // FIXME: Set a correct view transition context.
-        struct DynamicViewTransitionContext: ViewTransitionContext {
+        struct CustomViewTransitionContext: ViewTransitionContext {
 
         }
 
-        return .dynamic { () -> AnyPublisher<ViewTransitionContext, Swift.Error> in
+        return .custom { () -> AnyPublisher<ViewTransitionContext, Swift.Error> in
             Deferred {
                 Future<ViewTransitionContext, Swift.Error> { attemptToFulfill in
                     body()
                     
-                    attemptToFulfill(.success(DynamicViewTransitionContext()))
+                    attemptToFulfill(.success(CustomViewTransitionContext()))
                 }
             }
             .eraseToAnyPublisher()

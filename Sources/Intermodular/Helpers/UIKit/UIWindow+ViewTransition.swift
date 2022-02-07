@@ -16,7 +16,7 @@ extension ViewTransition {
         let transition = mergeCoordinator(coordinator)
         let animated = transition.animated
         
-        if case .dynamic(let trigger) = transition.finalize() {
+        if case .custom(let trigger) = transition.finalize() {
             return trigger()
         }
         

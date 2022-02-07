@@ -189,7 +189,7 @@ extension UIViewController {
                 }
             }
             
-            case .dynamic: do {
+            case .custom: do {
                 fatalError()
             }
             
@@ -218,7 +218,7 @@ extension ViewTransition {
     ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
         let transition = mergeCoordinator(coordinator)
         
-        if case .dynamic(let trigger) = transition.finalize() {
+        if case .custom(let trigger) = transition.finalize() {
             return trigger()
         }
         

@@ -89,7 +89,7 @@ struct ContentView: View {
 
 ## Custom Transitions
 
-If you need lower level access to the underlying `UIViewController ` or `UIWindow`, use `ViewTransition.dynamic` to implement a custom transition.
+If you need lower level access to the underlying `UIViewController ` or `UIWindow`, use `ViewTransition.custom` to implement a custom transition.
 
 In the following example, `MyRoute.foo` is implemented via a standard `ViewTransition` whereas `MyRoute.bar` is implemented as a custom one.
 
@@ -110,7 +110,7 @@ class MyViewCoordinator: UIViewControllerCoordinator<MyRoute> {
             case .foo:
                 return .present(Text("Foo"))
             case .bar:
-                return .dynamic {
+                return .custom {
                     guard let rootViewController = self.rootViewController else {
                         return assertionFailure()
                     }
