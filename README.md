@@ -93,6 +93,8 @@ If you need lower level access to the underlying `UIViewController ` or `UIWindo
 
 In the following example, `MyRoute.foo` is implemented via a standard `ViewTransition` whereas `MyRoute.bar` is implemented as a custom one.
 
+**Note:** Refrain from adding side-effects or business logic to your custom transition block. A `ViewCoordinator` is only supposed to handle transitions. Adding anything beyond transition logic breaks the conceptual model of a coordinator.
+
 ```swift
 import Coordinator
 import UIKit
