@@ -8,6 +8,8 @@ This framework uses three main concepts:
 
 # Getting Started 
 
+## Basics
+
 ### Definite a set of destinations
 
 A destination could be a screen, a modal or even a dismiss action. Destinations are typically represented via `enum`s.
@@ -84,4 +86,35 @@ struct ContentView: View {
     }
 }
 ```
+
+## Custom Transitions
+
+If you need lower level access to the underlying `UIViewController ` or `UIWindow`, use `ViewTransition.dynamic` to implement a custom transition.
+
+In the following example, `MyRoute.foo` is implemented via a standard `ViewTransition` whereas `MyRoute.bar` is implemented as a custom one.
+
+```swift
+import Coordinator
+import UIKit
+
+enum MyRoute {
+    case foo
+    case bar
+}
+
+class MyViewCoordinator: UIViewControllerCoordinator<MyRoute> {
+    override func transition(for route: MyRoute) -> ViewTransition {
+        switch route {
+            case .foo:
+                return .present(Text("Foo"))
+            case .bar:
+                return .dynamic {
+                    self.rootViewController!.present(UIViewController(), animated: true, completion: { })
+                }
+        }
+    }
+}
+```
+
+
 

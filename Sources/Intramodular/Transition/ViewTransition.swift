@@ -238,12 +238,32 @@ extension ViewTransition {
     }
     
     @inlinable
-    public static func dynamic(
+    internal static func dynamic(
         _ body: @escaping () -> AnyPublisher<ViewTransitionContext, Swift.Error>
     ) -> ViewTransition {
         .init(payload: .dynamic(body))
     }
-    
+
+    public static func dynamic(
+        _ body: @escaping () -> Void
+    ) -> ViewTransition {
+        // FIXME: Set a correct view transition context.
+        struct DynamicViewTransitionContext: ViewTransitionContext {
+
+        }
+
+        return .dynamic { () -> AnyPublisher<ViewTransitionContext, Swift.Error> in
+            Deferred {
+                Future<ViewTransitionContext, Swift.Error> { attemptToFulfill in
+                    body()
+                    
+                    attemptToFulfill(.success(DynamicViewTransitionContext()))
+                }
+            }
+            .eraseToAnyPublisher()
+        }
+    }
+
     @inlinable
     public static var none: ViewTransition {
         .init(payload: .none)
