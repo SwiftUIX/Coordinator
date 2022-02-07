@@ -109,7 +109,16 @@ class MyViewCoordinator: UIViewControllerCoordinator<MyRoute> {
                 return .present(Text("Foo"))
             case .bar:
                 return .dynamic {
-                    self.rootViewController!.present(UIViewController(), animated: true, completion: { })
+                    guard let rootViewController = self.rootViewController else {
+                        return assertionFailure()
+                    }
+
+                    // Use `rootViewController` to perform a custom transition.
+                    rootViewController.present(
+                        UIViewController(),
+                        animated: true,
+                        completion: { }
+                    )
                 }
         }
     }
