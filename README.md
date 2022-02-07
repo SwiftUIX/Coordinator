@@ -4,7 +4,7 @@ This framework uses three main concepts:
 
 - **Route** - an identifiable value that represents a destination in your app 
 - **Transition** - a visual transition to be applied on a view 
-- **Coordinator** - an object that maps **routes** to **transitions** and applies it on the current view hierarchy.****
+- **Coordinator** - an object that maps **routes** to **transitions** and applies it on the current view hierarchy.
 
 # Getting Started 
 
