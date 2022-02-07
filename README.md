@@ -4,7 +4,7 @@ This framework uses three main concepts:
 
 - **Route** - an identifiable value that represents a destination in your app 
 - **Transition** - a visual transition to be applied on a view 
-- **Coordinator** - an object that maps **routes** to **transitions** and applies it on the current view hierarchy 
+- **Coordinator** - an object that maps **routes** to **transitions** and applies it on the current view hierarchy.****
 
 # Getting Started 
 
@@ -93,8 +93,6 @@ If you need lower level access to the underlying `UIViewController ` or `UIWindo
 
 In the following example, `MyRoute.foo` is implemented via a standard `ViewTransition` whereas `MyRoute.bar` is implemented as a custom one.
 
-**Note:** Refrain from adding side-effects or business logic to your custom transition block. A `ViewCoordinator` is only supposed to handle transitions. Adding anything beyond transition logic breaks the conceptual model of a coordinator.
-
 ```swift
 import Coordinator
 import UIKit
@@ -127,5 +125,4 @@ class MyViewCoordinator: UIViewControllerCoordinator<MyRoute> {
 }
 ```
 
-
-
+**Note:** Refrain from adding side-effects or business logic to your custom transition block. A `ViewCoordinator` is only supposed to handle transitions. Adding anything beyond transition logic breaks the conceptual model of a coordinator.
