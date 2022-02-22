@@ -87,6 +87,55 @@ struct ContentView: View {
 }
 ```
 
+## Ad-hoc Coordinators
+
+If you wish to provide a scoped coordinator for a child view in SwiftUI, you can use `View.coordinate` to create an ad-hoc coordinator.
+
+```swift
+struct ContentView: View {
+    private enum MyRoute {
+        case foo
+        case bar
+    }
+
+    var body: some View {
+        NavigationView {
+            ChildView()
+        }
+        .coordinate(MyRoute.self) { route in
+            switch route {
+                case .foo:
+                    return .push(Text("Foo"))
+                case .bar:
+                    return .present(Text("Bar"))
+            }
+        }
+    }
+
+    private struct ChildView: View {
+        @Coordinator(for: MyRoute.self) var coordinator
+
+        var body: some View {
+            VStack {
+                Button("Foo") {
+                    coordinator.trigger(.foo)
+                }
+
+                Button("Bar") {
+                    coordinator.trigger(.bar)
+                }
+            }
+        }
+    }
+}
+```
+
+In this example `ContentView` creates an ad-hoc coordinator via `.coordinate(MyRoute.self) { .. }` and provides it to a `NavigationView` containing `ChildView`. 
+
+`ChildView` can now access this coordinator using the `@Coordinator` property wrapper referencing the route type `MyRoute` declared inside `ContentView`. 
+
+In this example, only `ContentView` and types defined within its namespace can access `MyRoute` as it is marked as a private `enum`. It is good practice to scope your routes tightly wherever possible, as it allows you to reason about your navigation flows in a simpler way.
+
 ## Custom Transitions
 
 If you need lower level access to the underlying `UIViewController ` or `UIWindow`, use `ViewTransition.custom` to implement a custom transition.
