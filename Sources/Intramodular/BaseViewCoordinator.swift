@@ -74,12 +74,12 @@ open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, View
     }
     
     @inlinable
-    public func environment(_ builder: EnvironmentInsertions) {
-        environmentInsertions.merge(builder)
+    public func insert(contentsOf insertions: EnvironmentInsertions) {
+        environmentInsertions.merge(insertions)
         
         for child in children {
             if let child = child as? EnvironmentPropagator {
-                child.environment(builder)
+                child.insert(contentsOf: insertions)
             }
         }
     }
@@ -87,10 +87,7 @@ open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, View
     open func addChild(_ presentable: DynamicViewPresentable) {
         if let presentable = presentable as? EnvironmentPropagator {
             presentable.insertEnvironmentObject(AnyViewCoordinator(self))
-        }
-        
-        if let presentable = presentable as? EnvironmentPropagator {
-            presentable.environment(environmentInsertions)
+            presentable.insert(contentsOf: environmentInsertions)
         }
         
         if let presentable = presentable as? OpaqueBaseViewCoordinator {
@@ -105,7 +102,7 @@ open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, View
             parent.insertEnvironmentObject(AnyViewCoordinator(self))
         }
         
-        environment(parent.environmentInsertions)
+        insert(contentsOf: parent.environmentInsertions)
         
         for child in children {
             if let child = child as? OpaqueBaseViewCoordinator {
