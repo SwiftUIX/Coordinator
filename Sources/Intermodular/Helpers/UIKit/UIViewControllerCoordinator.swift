@@ -60,7 +60,7 @@ open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Rou
     public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         do {
             return transition(for: route)
-                .mergeEnvironmentBuilder(environmentBuilder)
+                .environment(environmentInsertions)
                 .triggerPublisher(in: try rootViewController.unwrap(), animated: true, coordinator: self)
                 .handleOutput { [weak self] _ in
                     self?.updateAllChildren()

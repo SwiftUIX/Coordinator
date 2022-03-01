@@ -51,7 +51,7 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _op
             let window = try self.window.unwrap()
             
             return transition(for: route)
-                .mergeEnvironmentBuilder(environmentBuilder)
+                .environment(environmentInsertions)
                 .triggerPublisher(in: window, coordinator: self)
                 .handleOutput { [weak self] _ in
                     self?.updateAllChildren()

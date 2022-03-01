@@ -7,7 +7,7 @@ import SwiftUIX
 
 @propertyWrapper
 public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, PropertyWrapper {
-    @Environment(\.environmentBuilder) var environmentBuilder
+    @Environment(\._environmentInsertions) var environmentInsertions
     
     @OptionalEnvironmentObject public var _wrappedValue0: WrappedValue?
     @OptionalEnvironmentObject public var _wrappedValue1: AnyViewCoordinator<WrappedValue.Route>?
@@ -24,8 +24,8 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
             fatalError("Could not resolve a coordinator for \(String(describing: WrappedValue.Route.self)) in the view hierarchy. Try adding `.coordinator(myCoordinator)` in your view hierarchy.")
         }
         
-        if let result = result as? EnvironmentProvider {
-            result.environmentBuilder.merge(environmentBuilder)
+        if let result = result as? EnvironmentPropagator {
+            result.environmentInsertions.merge(environmentInsertions)
         }
         
         return result as! WrappedValue

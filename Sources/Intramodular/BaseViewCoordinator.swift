@@ -10,7 +10,7 @@ open class OpaqueBaseViewCoordinator {
     
     public let cancellables = Cancellables()
     
-    open var environmentBuilder = EnvironmentBuilder()
+    open var environmentInsertions = EnvironmentInsertions()
     
     open internal(set) var children: [DynamicViewPresentable] = []
     
@@ -64,33 +64,33 @@ open class OpaqueBaseViewCoordinator {
 open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, ViewCoordinator {
     @inlinable
     public func insertEnvironmentObject<B: ObservableObject>(_ bindable: B) {
-        environmentBuilder.insert(bindable)
+        environmentInsertions.insert(bindable)
         
         for child in children {
-            if let child = child as? EnvironmentProvider {
+            if let child = child as? EnvironmentPropagator {
                 child.insertEnvironmentObject(bindable)
             }
         }
     }
     
     @inlinable
-    public func mergeEnvironmentBuilder(_ builder: EnvironmentBuilder) {
-        environmentBuilder.merge(builder)
+    public func environment(_ builder: EnvironmentInsertions) {
+        environmentInsertions.merge(builder)
         
         for child in children {
-            if let child = child as? EnvironmentProvider {
-                child.mergeEnvironmentBuilder(builder)
+            if let child = child as? EnvironmentPropagator {
+                child.environment(builder)
             }
         }
     }
     
     open func addChild(_ presentable: DynamicViewPresentable) {
-        if let presentable = presentable as? DynamicViewPresenter {
+        if let presentable = presentable as? EnvironmentPropagator {
             presentable.insertEnvironmentObject(AnyViewCoordinator(self))
         }
         
-        if let presentable = presentable as? EnvironmentProvider {
-            presentable.mergeEnvironmentBuilder(environmentBuilder)
+        if let presentable = presentable as? EnvironmentPropagator {
+            presentable.environment(environmentInsertions)
         }
         
         if let presentable = presentable as? OpaqueBaseViewCoordinator {
@@ -101,11 +101,11 @@ open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, View
     }
     
     override open func becomeChild(of parent: OpaqueBaseViewCoordinator) {
-        if let parent = parent as? EnvironmentProvider {
+        if let parent = parent as? EnvironmentPropagator {
             parent.insertEnvironmentObject(AnyViewCoordinator(self))
         }
         
-        mergeEnvironmentBuilder(parent.environmentBuilder)
+        environment(parent.environmentInsertions)
         
         for child in children {
             if let child = child as? OpaqueBaseViewCoordinator {

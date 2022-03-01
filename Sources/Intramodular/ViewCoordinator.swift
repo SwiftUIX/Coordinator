@@ -6,7 +6,7 @@ import Merge
 import Foundation
 import SwiftUIX
 
-public protocol ViewCoordinator: EnvironmentProvider, ObservableObject {
+public protocol ViewCoordinator: EnvironmentPropagator, ObservableObject {
     associatedtype Route
     
     typealias Transition = ViewTransition

@@ -24,13 +24,13 @@ public struct ViewTransition: ViewTransitionContext {
     @usableFromInline
     var payloadViewType: Any.Type?
     @usableFromInline
-    var environmentBuilder: EnvironmentBuilder
+    var environmentInsertions: EnvironmentInsertions
     
     @usableFromInline
     init(payload: (AnyPresentationView) -> ViewTransition.Payload, view: AnyPresentationView) {
         self.payload = payload(view)
         self.payloadViewType = type(of: view)
-        self.environmentBuilder = .init()
+        self.environmentInsertions = .init()
     }
     
     @usableFromInline
@@ -43,7 +43,7 @@ public struct ViewTransition: ViewTransitionContext {
         self.payload = payload
         self.payloadViewName = nil
         self.payloadViewType = nil
-        self.environmentBuilder = .init()
+        self.environmentInsertions = .init()
     }
     
     @usableFromInline
@@ -51,7 +51,7 @@ public struct ViewTransition: ViewTransitionContext {
         var result = payload
         
         result.mutateViewInPlace({
-            $0.mergeEnvironmentBuilderInPlace(environmentBuilder)
+            $0.environmentInPlace(environmentInsertions)
         })
         
         return result
@@ -278,17 +278,17 @@ extension ViewTransition {
 }
 
 extension ViewTransition {
-    public func mergeEnvironmentBuilder(_ builder: EnvironmentBuilder) -> ViewTransition {
+    public func environment(_ builder: EnvironmentInsertions) -> ViewTransition {
         var result = self
         
-        result.environmentBuilder.merge(builder)
+        result.environmentInsertions.merge(builder)
         
         return result
     }
     
     public func mergeCoordinator<VC: ViewCoordinator>(_ coordinator: VC) -> Self {
-        self.mergeEnvironmentBuilder(.object(coordinator))
-            .mergeEnvironmentBuilder(.object(AnyViewCoordinator(coordinator)))
+        self.environment(.object(coordinator))
+            .environment(.object(AnyViewCoordinator(coordinator)))
     }
 }
 
