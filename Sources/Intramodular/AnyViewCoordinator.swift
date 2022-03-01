@@ -11,7 +11,7 @@ protocol _opaque_AnyViewCoordinator {
     #endif
 }
 
-public final class AnyViewCoordinator<Route: Hashable>: _opaque_AnyViewCoordinator, ViewCoordinator {
+public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCoordinator {
     public let base: EnvironmentProvider
     
     public var environmentBuilder: EnvironmentBuilder {

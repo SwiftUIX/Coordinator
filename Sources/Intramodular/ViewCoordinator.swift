@@ -7,7 +7,7 @@ import Foundation
 import SwiftUIX
 
 public protocol ViewCoordinator: EnvironmentProvider, ObservableObject {
-    associatedtype Route: Hashable
+    associatedtype Route
     
     typealias Transition = ViewTransition
     
