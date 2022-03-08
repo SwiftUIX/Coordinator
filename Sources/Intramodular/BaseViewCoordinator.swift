@@ -61,7 +61,7 @@ open class OpaqueBaseViewCoordinator {
     }
 }
 
-open class BaseViewCoordinator<Route: Hashable>: OpaqueBaseViewCoordinator, ViewCoordinator {
+open class BaseViewCoordinator<Route>: OpaqueBaseViewCoordinator, ViewCoordinator {
     @inlinable
     public func insertEnvironmentObject<B: ObservableObject>(_ bindable: B) {
         environmentInsertions.insert(bindable)

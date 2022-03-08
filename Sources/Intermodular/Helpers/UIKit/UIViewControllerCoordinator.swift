@@ -20,7 +20,7 @@ public protocol UIViewControllerCoordinatorProtocol: _opaque_UIViewControllerCoo
     init(rootViewController: UIViewController?)
 }
 
-open class UIViewControllerCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
+open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
     @Published public var rootViewController: UIViewController? {
         didSet {
             updateAllChildren()
