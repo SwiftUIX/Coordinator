@@ -21,8 +21,10 @@ public protocol UIViewControllerCoordinatorProtocol: _opaque_UIViewControllerCoo
 }
 
 open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
-    @Published public var rootViewController: UIViewController? {
-        didSet {
+    public var rootViewController: UIViewController? {
+        willSet {
+            objectWillChange.send()
+        } didSet {
             updateAllChildren()
         }
     }
