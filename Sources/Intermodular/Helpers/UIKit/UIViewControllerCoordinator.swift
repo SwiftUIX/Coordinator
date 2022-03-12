@@ -10,14 +10,10 @@ import SwiftUIX
 
 public protocol _opaque_UIViewControllerCoordinator: AnyObject {
     var rootViewController: UIViewController? { get set }
-    
-    init(rootViewController: UIViewController?)
 }
 
 public protocol UIViewControllerCoordinatorProtocol: _opaque_UIViewControllerCoordinator, ViewCoordinator {
     var rootViewController: UIViewController? { get set }
-    
-    init(rootViewController: UIViewController?)
 }
 
 open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
@@ -44,7 +40,7 @@ open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, Dynam
     }
     
     @inlinable
-    public required init(rootViewController: UIViewController? = nil) {
+    public init(rootViewController: UIViewController? = nil) {
         self.rootViewController = rootViewController
     }
     

@@ -17,8 +17,10 @@ public protocol UIWindowCoordinatorProtocol: _opaque_UIWindowCoordinator, ViewCo
 }
 
 open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _opaque_UIWindowCoordinator {
-    @Published public var window: UIWindow? {
-        didSet {
+    public var window: UIWindow? {
+        willSet {
+            objectWillChange.send()
+        } didSet {
             updateAllChildren()
         }
     }
