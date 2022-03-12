@@ -48,39 +48,81 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
 
 extension View {
     #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
-    public func coordinator<C: UIViewControllerCoordinator<Route>, Route>(
-        _ coordinator: C
+    public func coordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>(
+        _ coordinator: Coordinator
     ) -> some View {
-        environmentObject(coordinator)
-            .environmentObject(AnyViewCoordinator(coordinator))
-            .onAppKitOrUIKitViewControllerResolution {
-                if coordinator.rootViewController == nil {
-                    coordinator.rootViewController = $0
-                }
-            }
-        
+        modifier(AttachUIViewControllerCoordinator(coordinator: coordinator))
     }
     
-    public func coordinator<C: UIWindowCoordinator<Route>, Route>(
-        _ coordinator: C
+    public func coordinator<Route, Coordinator: UIWindowCoordinator<Route>>(
+        _ coordinator: Coordinator
     ) -> some View {
-        environmentObject(coordinator)
-            .environmentObject(AnyViewCoordinator(coordinator))
-            .onAppKitOrUIKitViewControllerResolution {
-                if coordinator.window == nil {
-                    coordinator.window = $0.view.window
-                }
-            }
+        modifier(AttachUIWindowCoordinator(coordinator: coordinator))
     }
     
-    public func coordinator<C: ViewCoordinator>(
-        _ coordinator: C
+    public func coordinator<Coordinator: ViewCoordinator>(
+        _ coordinator: Coordinator
     ) -> some View {
-        environmentObject(coordinator)
-            .environmentObject((coordinator as? AnyViewCoordinator<C.Route>) ?? AnyViewCoordinator(coordinator))
-            .onAppKitOrUIKitViewControllerResolution {
-                AnyViewCoordinator(coordinator)._setViewController($0)
-            }
+        modifier(AttachViewCoordinator(coordinator: coordinator))
     }
     #endif
 }
+
+#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>: ViewModifier {
+    @ObservedObject var coordinator: Coordinator
+    
+    func body(content: Content) -> some View {
+        PassthroughView {
+            if coordinator.rootViewController == nil {
+                ZeroSizeView()
+            } else {
+                content
+            }
+        }
+        .environmentObject(coordinator)
+        .environmentObject(AnyViewCoordinator(coordinator))
+        .onAppKitOrUIKitViewControllerResolution {
+            if coordinator.rootViewController == nil {
+                coordinator.rootViewController = $0
+            }
+        }
+    }
+}
+
+private struct AttachUIWindowCoordinator<Route, Coordinator: UIWindowCoordinator<Route>>: ViewModifier {
+    @ObservedObject var coordinator: Coordinator
+    
+    func body(content: Content) -> some View {
+        PassthroughView {
+            if coordinator.window == nil {
+                ZeroSizeView()
+            } else {
+                content
+            }
+        }
+        .environmentObject(coordinator)
+        .environmentObject(AnyViewCoordinator(coordinator))
+        .onAppKitOrUIKitViewControllerResolution {
+            if coordinator.window == nil {
+                coordinator.window = $0.view.window
+            }
+        }
+    }
+}
+
+private struct AttachViewCoordinator<Coordinator: ViewCoordinator>: ViewModifier {
+    @ObservedObject var coordinator: Coordinator
+    
+    func body(content: Content) -> some View {
+        PassthroughView {
+            content
+        }
+        .environmentObject(coordinator)
+        .environmentObject((coordinator as? AnyViewCoordinator<Coordinator.Route>) ?? AnyViewCoordinator(coordinator))
+        .onAppKitOrUIKitViewControllerResolution {
+            AnyViewCoordinator(coordinator)._setViewController($0)
+        }
+    }
+}
+#endif
