@@ -83,9 +83,7 @@ private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewContr
         .environmentObject(coordinator)
         .environmentObject(AnyViewCoordinator(coordinator))
         .onAppKitOrUIKitViewControllerResolution {
-            if coordinator.rootViewController == nil {
-                coordinator.rootViewController = $0
-            }
+            coordinator.rootViewController = $0
         }
     }
 }
@@ -104,9 +102,7 @@ private struct AttachUIWindowCoordinator<Route, Coordinator: UIWindowCoordinator
         .environmentObject(coordinator)
         .environmentObject(AnyViewCoordinator(coordinator))
         .onAppKitOrUIKitViewControllerResolution {
-            if coordinator.window == nil {
-                coordinator.window = $0.view.window
-            }
+            coordinator.window = $0.view.window
         }
     }
 }
