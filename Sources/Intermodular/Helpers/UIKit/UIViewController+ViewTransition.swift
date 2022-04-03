@@ -67,7 +67,7 @@ extension UIViewController {
             case .pushOrPresent(let view): do {
                 if let navigationController = nearestNavigationController {
                     navigationController.pushViewController(
-                        view._toAppKitOrUIKitViewController,
+                        view._toAppKitOrUIKitViewController(),
                         animated: animated
                     ) {
                         completion()
