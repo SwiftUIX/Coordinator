@@ -57,7 +57,7 @@ extension UIViewController {
                 }
                 
                 navigationController.pushViewController(
-                    CocoaHostingController(mainView: view),
+                    view._toAppKitOrUIKitViewController(),
                     animated: animated
                 ) {
                     completion()
@@ -67,7 +67,7 @@ extension UIViewController {
             case .pushOrPresent(let view): do {
                 if let navigationController = nearestNavigationController {
                     navigationController.pushViewController(
-                        CocoaHostingController(mainView: view),
+                        view._toAppKitOrUIKitViewController,
                         animated: animated
                     ) {
                         completion()
@@ -137,7 +137,7 @@ extension UIViewController {
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
-                    window.rootViewController = CocoaHostingController(mainView: view)
+                    window.rootViewController = view._toAppKitOrUIKitViewController()
                     
                     completion()
                 } else {
@@ -147,11 +147,11 @@ extension UIViewController {
             
             case .set(let view): do {
                 if let viewController = nearestNavigationController {
-                    viewController.setViewControllers([CocoaHostingController(mainView: view)], animated: animated)
+                    viewController.setViewControllers([view._toAppKitOrUIKitViewController()], animated: animated)
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
-                    window.rootViewController = CocoaHostingController(mainView: view)
+                    window.rootViewController = view._toAppKitOrUIKitViewController()
                     
                     completion()
                 } else if let viewController = self as? CocoaHostingController<AnyPresentationView> {
