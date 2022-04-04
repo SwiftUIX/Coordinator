@@ -6,8 +6,7 @@
 
 import UIKit
 
-extension UIViewController {    
-    @usableFromInline
+extension UIViewController {
     var topmostPresentedViewController: UIViewController? {
         var topController = self
         
@@ -18,7 +17,6 @@ extension UIViewController {
         return topController
     }
     
-    @usableFromInline
     var topmostViewController: UIViewController {
         topmostPresentedViewController ?? self
     }
