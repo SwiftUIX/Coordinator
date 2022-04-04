@@ -8,7 +8,6 @@ import SwiftUIX
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
 extension ViewTransition {
-    @usableFromInline
     func triggerPublisher<VC: ViewCoordinator>(
         in window: UIWindow,
         coordinator: VC

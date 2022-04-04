@@ -7,7 +7,6 @@
 import UIKit
 
 extension UINavigationController {
-    @usableFromInline
     func pushViewController(
         _ viewController: UIViewController,
         animated: Bool,
@@ -21,7 +20,6 @@ extension UINavigationController {
         CATransaction.commit()
     }
     
-    @usableFromInline
     func popViewController(
         animated: Bool,
         completion: (() -> Void)?
@@ -56,7 +54,6 @@ extension UINavigationController {
         }
     }
     
-    @usableFromInline
     func popToRootViewController(
         animated: Bool,
         completion: (() -> Void)?

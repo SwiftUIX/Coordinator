@@ -72,29 +72,24 @@ open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _op
 }
 
 extension UIWindowCoordinator: DynamicViewPresenter {
-    @inlinable
     open var presenter: DynamicViewPresenter? {
         nil
     }
     
-    @inlinable
     final public var presented: DynamicViewPresentable? {
         window?.presented
     }
     
-    @inlinable
     final public func present(_ presentation: AnyModalPresentation, completion: @escaping () -> Void) {
         window?.present(presentation, completion: completion)
     }
     
     @discardableResult
-    @inlinable
     final public func dismiss(withAnimation animation: Animation?) -> Future<Bool, Never> {
         window?.dismiss(withAnimation: animation) ?? .just(.success(false))
     }
     
     @discardableResult
-    @inlinable
     final public func dismissSelf(withAnimation animation: Animation?) -> Future<Bool, Never> {
         window?.dismissSelf(withAnimation: animation)  ?? .just(.success(false))
     }

@@ -29,22 +29,18 @@ open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, Dynam
         rootViewController?._cocoaPresentationCoordinator ?? .init()
     }
     
-    @inlinable
     open var presentationName: AnyHashable? {
         rootViewController?.presentationName
     }
     
-    @inlinable
     open var presenter: DynamicViewPresenter? {
         rootViewController?.presenter
     }
     
-    @inlinable
     public init(rootViewController: UIViewController? = nil) {
         self.rootViewController = rootViewController
     }
     
-    @inlinable
     public convenience init<Route: Hashable>(parent: UIViewControllerCoordinator<Route>) {
         self.init(rootViewController: parent.rootViewController)
         
@@ -72,24 +68,20 @@ open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, Dynam
 }
 
 extension UIViewControllerCoordinator {
-    @inlinable
     final public var presented: DynamicViewPresentable? {
         rootViewController?.presented
     }
     
-    @inlinable
     final public func present(_ presentation: AnyModalPresentation, completion: @escaping () -> Void) {
         rootViewController?.present(presentation, completion: completion)
     }
     
     @discardableResult
-    @inlinable
     final public func dismiss(withAnimation animation: Animation?) -> Future<Bool, Never> {
         rootViewController?.dismiss(withAnimation: animation) ?? .just(.success(false))
     }
     
     @discardableResult
-    @inlinable
     final public func dismissSelf(withAnimation animation: Animation?) -> Future<Bool, Never> {
         rootViewController?.dismissSelf(withAnimation: animation) ?? .just(.success(false))
     }
