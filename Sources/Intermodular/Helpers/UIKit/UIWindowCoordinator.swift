@@ -16,7 +16,7 @@ public protocol UIWindowCoordinatorProtocol: _opaque_UIWindowCoordinator, ViewCo
     var window: UIWindow? { get set }
 }
 
-open class UIWindowCoordinator<Route: Hashable>: BaseViewCoordinator<Route>, _opaque_UIWindowCoordinator {
+open class UIWindowCoordinator<Route>: BaseViewCoordinator<Route>, _opaque_UIWindowCoordinator {
     public var window: UIWindow? {
         willSet {
             objectWillChange.send()
