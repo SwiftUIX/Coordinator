@@ -78,6 +78,7 @@ private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewContr
                 ZeroSizeView()
             } else {
                 content
+                    .environment(coordinator.environmentInsertions)
             }
         }
         .environmentObject(coordinator)

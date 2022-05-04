@@ -2,6 +2,7 @@
 // Copyright (c) Vatsal Manot
 //
 
+import Diagnostics
 import Merge
 import Foundation
 import SwiftUIX
@@ -17,6 +18,10 @@ public protocol UIViewControllerCoordinatorProtocol: _opaque_UIViewControllerCoo
 }
 
 open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
+    enum TriggerError: Error {
+        case rootViewControllerMissing
+    }
+
     public var rootViewController: UIViewController? {
         willSet {
             objectWillChange.send()
@@ -52,17 +57,19 @@ open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, Dynam
     }
     
     public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        do {
-            return transition(for: route)
-                .environment(environmentInsertions)
-                .triggerPublisher(in: try rootViewController.unwrap(), animated: true, coordinator: self)
-                .handleOutput { [weak self] _ in
-                    self?.updateAllChildren()
-                }
-                .eraseToAnyPublisher()
-        } catch {
-            return .failure(error)
+        guard let rootViewController = rootViewController else {
+            XcodeRuntimeIssueLogger.default.log(.error, message: "Could not resolve a root view controller.")
+
+            return .failure(TriggerError.rootViewControllerMissing)
         }
+
+        return transition(for: route)
+            .environment(environmentInsertions)
+            .triggerPublisher(in: rootViewController, animated: true, coordinator: self)
+            .handleOutput { [weak self] _ in
+                self?.updateAllChildren()
+            }
+            .eraseToAnyPublisher()
     }
     
 }
