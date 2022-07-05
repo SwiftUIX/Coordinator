@@ -72,7 +72,7 @@ open class UIWindowCoordinator<Route>: BaseViewCoordinator<Route>, _opaque_UIWin
 }
 
 extension UIWindowCoordinator: DynamicViewPresenter {
-    open var presenter: DynamicViewPresenter? {
+    public var presenter: DynamicViewPresenter? {
         nil
     }
     
