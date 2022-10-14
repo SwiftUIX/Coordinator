@@ -102,8 +102,10 @@ private struct AttachUIWindowCoordinator<Route, Coordinator: UIWindowCoordinator
         }
         .environmentObject(coordinator)
         .environmentObject(AnyViewCoordinator(coordinator))
-        .onAppKitOrUIKitViewControllerResolution {
-            coordinator.window = $0.view.window
+        .onAppKitOrUIKitViewControllerResolution { viewController in
+            DispatchQueue.main.async {
+                coordinator.window = viewController.view.window
+            }
         }
     }
 }
@@ -117,8 +119,10 @@ private struct AttachViewCoordinator<Coordinator: ViewCoordinator>: ViewModifier
         }
         .environmentObject(coordinator)
         .environmentObject((coordinator as? AnyViewCoordinator<Coordinator.Route>) ?? AnyViewCoordinator(coordinator))
-        .onAppKitOrUIKitViewControllerResolution {
-            AnyViewCoordinator(coordinator)._setViewController($0)
+        .onAppKitOrUIKitViewControllerResolution { viewController in
+            DispatchQueue.main.async {
+                AnyViewCoordinator(coordinator)._setViewController(viewController)
+            }
         }
     }
 }
