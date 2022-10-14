@@ -83,9 +83,9 @@ private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewContr
         }
         .environmentObject(coordinator)
         .environmentObject(AnyViewCoordinator(coordinator))
-        .onAppKitOrUIKitViewControllerResolution {
+        .onAppKitOrUIKitViewControllerResolution { viewController in
             DispatchQueue.main.async {
-                coordinator.rootViewController = $0
+                coordinator.rootViewController = viewController
             }
         }
     }
