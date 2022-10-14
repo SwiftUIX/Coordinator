@@ -15,9 +15,9 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
     @inline(never)
     public var wrappedValue: WrappedValue {
         let result: Any? = nil
-            ?? _wrappedValue0
-            ?? _wrappedValue1?.base
-            ?? OpaqueBaseViewCoordinator
+        ?? _wrappedValue0
+        ?? _wrappedValue1?.base
+        ?? OpaqueBaseViewCoordinator
             ._runtimeLookup[ObjectIdentifier(WrappedValue.self)]?.takeUnretainedValue()
         
         guard let result = result else {
@@ -47,7 +47,7 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
 }
 
 extension View {
-    #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
     public func coordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>(
         _ coordinator: Coordinator
     ) -> some View {
@@ -65,7 +65,7 @@ extension View {
     ) -> some View {
         modifier(AttachViewCoordinator(coordinator: coordinator))
     }
-    #endif
+#endif
 }
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
@@ -84,7 +84,9 @@ private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewContr
         .environmentObject(coordinator)
         .environmentObject(AnyViewCoordinator(coordinator))
         .onAppKitOrUIKitViewControllerResolution {
-            coordinator.rootViewController = $0
+            DispatchQueue.main.async {
+                coordinator.rootViewController = $0
+            }
         }
     }
 }
