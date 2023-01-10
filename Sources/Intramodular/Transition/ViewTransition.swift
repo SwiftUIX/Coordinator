@@ -243,22 +243,22 @@ extension ViewTransition {
     ) -> ViewTransition {
         .init(payload: .custom(body))
     }
-
+    
     @available(*, deprecated, renamed: "custom")
     internal static func dynamic(
         _ body: @escaping () -> Void
     ) -> ViewTransition {
         .custom(body)
     }
-
+    
     public static func custom(
         _ body: @escaping () -> Void
     ) -> ViewTransition {
         // FIXME: Set a correct view transition context.
         struct CustomViewTransitionContext: ViewTransitionContext {
-
+            
         }
-
+        
         return .custom { () -> AnyPublisher<ViewTransitionContext, Swift.Error> in
             Deferred {
                 Future<ViewTransitionContext, Swift.Error> { attemptToFulfill in
@@ -270,7 +270,7 @@ extension ViewTransition {
             .eraseToAnyPublisher()
         }
     }
-
+    
     @inlinable
     public static var none: ViewTransition {
         .init(payload: .none)

@@ -128,4 +128,5 @@ private struct AttachViewCoordinator<Coordinator: ViewCoordinator>: ViewModifier
         }
     }
 }
+
 #endif

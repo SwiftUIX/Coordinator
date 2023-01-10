@@ -19,7 +19,7 @@ extension UIViewController {
                     completion()
                 }
             }
-
+                
             case .replace(let view): do {
                 if let viewController = topmostPresentedViewController?.presentingViewController {
                     viewController.dismiss(animated: animated) {
@@ -33,28 +33,28 @@ extension UIViewController {
                     }
                 }
             }
-
+                
             case .dismiss: do {
                 guard presentedViewController != nil else {
                     throw ViewTransition.Error.nothingToDismiss
                 }
-
+                
                 dismiss(animated: animated) {
                     completion()
                 }
             }
-
+                
             case .dismissView(let name): do {
                 _ = dismissView(named: name)
                     .onOutput(do: completion())
                     .retainSink()
             }
-
+                
             case .push(let view): do {
                 guard let navigationController = nearestNavigationController else {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
-
+                
                 navigationController.pushViewController(
                     view._toAppKitOrUIKitViewController(),
                     animated: animated
@@ -62,7 +62,7 @@ extension UIViewController {
                     completion()
                 }
             }
-
+                
             case .pushOrPresent(let view): do {
                 if let navigationController = nearestNavigationController {
                     navigationController.pushViewController(
@@ -77,27 +77,27 @@ extension UIViewController {
                     }
                 }
             }
-
+                
             case .pop: do {
                 guard let viewController = nearestNavigationController else {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
-
+                
                 viewController.popViewController(animated: animated) {
                     completion()
                 }
             }
-
+                
             case .popToRoot: do {
                 guard let viewController = nearestNavigationController else {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
-
+                
                 viewController.popToRootViewController(animated: animated) {
                     completion()
                 }
             }
-
+                
             case .popOrDismiss: do {
                 if let navigationController = nearestNavigationController, navigationController.viewControllers.count > 1 {
                     navigationController.popViewController(animated: animated) {
@@ -107,13 +107,13 @@ extension UIViewController {
                     guard presentedViewController != nil else {
                         throw ViewTransition.Error.nothingToDismiss
                     }
-
+                    
                     dismiss(animated: animated) {
                         completion()
                     }
                 }
             }
-
+                
             case .popToRootOrDismiss: do {
                 if let navigationController = nearestNavigationController, navigationController.viewControllers.count > 1 {
                     navigationController.popToRootViewController(animated: animated) {
@@ -123,39 +123,39 @@ extension UIViewController {
                     guard presentedViewController != nil else {
                         throw ViewTransition.Error.nothingToDismiss
                     }
-
+                    
                     dismiss(animated: animated) {
                         completion()
                     }
                 }
             }
-
+                
             case .setRoot(let view): do {
                 if let viewController = self as? CocoaHostingController<AnyPresentationView> {
                     viewController.rootView.content = view
-
+                    
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
                     window.rootViewController = view._toAppKitOrUIKitViewController()
-
+                    
                     completion()
                 } else {
                     throw ViewTransition.Error.cannotSetRoot
                 }
             }
-
+                
             case .set(let view): do {
                 if let viewController = nearestNavigationController {
                     viewController.setViewControllers([view._toAppKitOrUIKitViewController()], animated: animated)
-
+                    
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
                     window.rootViewController = view._toAppKitOrUIKitViewController()
-
+                    
                     completion()
                 } else if let viewController = self as? CocoaHostingController<AnyPresentationView> {
                     viewController.rootView.content = view
-
+                    
                     completion()
                 } else if topmostPresentedViewController != nil {
                     dismiss(animated: animated) {
@@ -165,14 +165,14 @@ extension UIViewController {
                     }
                 }
             }
-
+                
             case .linear(var transitions): do {
                 guard !transitions.isEmpty else {
                     return completion()
                 }
-
+                
                 var _error: Error?
-
+                
                 try trigger(transitions.removeFirst(), animated: animated) {
                     do {
                         try self.trigger(.linear(transitions), animated: animated) {
@@ -182,21 +182,21 @@ extension UIViewController {
                         _error = error
                     }
                 }
-
+                
                 if let error = _error {
                     throw error
                 }
             }
-
+                
             case .custom: do {
                 fatalError()
             }
-
+                
             case .none:
                 break
         }
     }
-
+    
     func presentOnTop(
         _ view: AnyPresentationView,
         named viewName: AnyHashable?,
@@ -214,11 +214,11 @@ extension ViewTransition {
         coordinator: VC
     ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
         let transition = mergeCoordinator(coordinator)
-
+        
         if case .custom(let trigger) = transition.finalize() {
             return trigger()
         }
-
+        
         return Future { attemptToFulfill in
             do {
                 try controller.trigger(transition, animated: animated) {

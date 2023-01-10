@@ -26,7 +26,7 @@ extension UINavigationController {
     ) {
         guard animated else {
             popViewController(animated: false)
-
+            
             return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
                 completion?()
             }
@@ -34,7 +34,7 @@ extension UINavigationController {
         
         if let coordinator = transitionCoordinator {
             popViewController(animated: animated)
-
+            
             coordinator.animate(alongsideTransition: nil) { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
                     completion?()

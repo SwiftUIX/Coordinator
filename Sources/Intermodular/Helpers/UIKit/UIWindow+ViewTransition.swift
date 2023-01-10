@@ -26,7 +26,7 @@ extension ViewTransition {
                     
                     attemptToFulfill(.success(self))
                 }
-                
+                    
                 default: do {
                     do {
                         try window.rootViewController!.trigger(transition, animated: animated) {

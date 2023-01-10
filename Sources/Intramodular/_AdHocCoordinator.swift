@@ -40,7 +40,7 @@ struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: UIViewCo
     }
 }
 
-struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewControllerRepresentable {    
+struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewControllerRepresentable {
     let rootView: Content
     let transitionImpl: (Route) -> ViewTransition
     

@@ -21,7 +21,7 @@ open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, Dynam
     enum TriggerError: Error {
         case rootViewControllerMissing
     }
-
+    
     public var rootViewController: UIViewController? {
         willSet {
             objectWillChange.send()
@@ -58,11 +58,11 @@ open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, Dynam
     
     public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         guard let rootViewController = rootViewController else {
-            XcodeRuntimeIssueLogger.default.log(.error, message: "Could not resolve a root view controller.")
-
+            runtimeIssue("Could not resolve a root view controller.")
+            
             return .failure(TriggerError.rootViewControllerMissing)
         }
-
+        
         return transition(for: route)
             .environment(environmentInsertions)
             .triggerPublisher(in: rootViewController, animated: true, coordinator: self)
