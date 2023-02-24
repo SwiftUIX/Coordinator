@@ -5,10 +5,10 @@
 import Merge
 import SwiftUIX
 
-open class OpaqueBaseViewCoordinator {
-    public static var _runtimeLookup: [ObjectIdentifier: Unmanaged<OpaqueBaseViewCoordinator>] = [:]
+open class _opaque_AppKitOrUIKitViewCoordinatorBase {
+    static var _runtimeLookup: [ObjectIdentifier: Unmanaged<_opaque_AppKitOrUIKitViewCoordinatorBase>] = [:]
     
-    public let cancellables = Cancellables()
+    fileprivate let cancellables = Cancellables()
     
     open var environmentInsertions = EnvironmentInsertions()
     
@@ -22,28 +22,28 @@ open class OpaqueBaseViewCoordinator {
         Self._runtimeLookup[ObjectIdentifier(Self.self)] = nil
     }
     
-    func becomeChild(of parent: OpaqueBaseViewCoordinator) {
+    func becomeChild(of parent: _opaque_AppKitOrUIKitViewCoordinatorBase) {
         update(withParent: parent)
     }
     
-    func update(withParent parent: OpaqueBaseViewCoordinator) {
+    func update(withParent parent: _opaque_AppKitOrUIKitViewCoordinatorBase) {
         #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
-        if let parent = parent as? _opaque_UIWindowCoordinator {
-            if let self = self as? _opaque_UIWindowCoordinator {
+        if let parent = parent as? any AppKitOrUIKitWindowCoordinatorType {
+            if let self = self as? any AppKitOrUIKitWindowCoordinatorType {
                 if self.window == nil {
                     self.window = parent.window
                 }
-            } else if let self = self as? _opaque_UIViewControllerCoordinator {
+            } else if let self = self as? any AppKitOrUIKitViewControllerCoordinatorType {
                 if self.rootViewController == nil {
                     self.rootViewController = parent.window?.rootViewController
                 }
             }
-        } else if let parent = parent as? _opaque_UIViewControllerCoordinator {
-            if let self = self as? _opaque_UIWindowCoordinator {
+        } else if let parent = parent as? any AppKitOrUIKitViewControllerCoordinatorType {
+            if let self = self as? any AppKitOrUIKitWindowCoordinatorType {
                 if self.window == nil {
                     self.window = parent.rootViewController?.view.window
                 }
-            } else if let self = self as? _opaque_UIViewControllerCoordinator {
+            } else if let self = self as? any AppKitOrUIKitViewControllerCoordinatorType {
                 if self.rootViewController == nil {
                     self.rootViewController = parent.rootViewController
                 }
@@ -54,15 +54,14 @@ open class OpaqueBaseViewCoordinator {
     
     func updateAllChildren() {
         for child in children {
-            if let coordinator = child as? OpaqueBaseViewCoordinator {
+            if let coordinator = child as? _opaque_AppKitOrUIKitViewCoordinatorBase {
                 coordinator.update(withParent: self)
             }
         }
     }
 }
 
-open class BaseViewCoordinator<Route>: OpaqueBaseViewCoordinator, ViewCoordinator {
-    @inlinable
+open class _AppKitOrUIKitViewCoordinatorBase<Route>: _opaque_AppKitOrUIKitViewCoordinatorBase, ViewCoordinator {
     public func insertEnvironmentObject<B: ObservableObject>(_ bindable: B) {
         environmentInsertions.insert(bindable)
         
@@ -73,7 +72,6 @@ open class BaseViewCoordinator<Route>: OpaqueBaseViewCoordinator, ViewCoordinato
         }
     }
     
-    @inlinable
     public func insert(contentsOf insertions: EnvironmentInsertions) {
         environmentInsertions.merge(insertions)
         
@@ -90,14 +88,14 @@ open class BaseViewCoordinator<Route>: OpaqueBaseViewCoordinator, ViewCoordinato
             presentable.insert(contentsOf: environmentInsertions)
         }
         
-        if let presentable = presentable as? OpaqueBaseViewCoordinator {
+        if let presentable = presentable as? _opaque_AppKitOrUIKitViewCoordinatorBase {
             presentable.becomeChild(of: self)
         }
         
         children.append(presentable)
     }
     
-    override open func becomeChild(of parent: OpaqueBaseViewCoordinator) {
+    override open func becomeChild(of parent: _opaque_AppKitOrUIKitViewCoordinatorBase) {
         if let parent = parent as? EnvironmentPropagator {
             parent.insertEnvironmentObject(AnyViewCoordinator(self))
         }
@@ -105,24 +103,21 @@ open class BaseViewCoordinator<Route>: OpaqueBaseViewCoordinator, ViewCoordinato
         insert(contentsOf: parent.environmentInsertions)
         
         for child in children {
-            if let child = child as? OpaqueBaseViewCoordinator {
+            if let child = child as? _opaque_AppKitOrUIKitViewCoordinatorBase {
                 child.becomeChild(of: self)
             }
         }
     }
     
-    @inlinable
     open func transition(for _: Route) -> ViewTransition {
         fatalError()
     }
     
-    @inlinable
     public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         Empty().eraseToAnyPublisher()
     }
     
     @discardableResult
-    @inlinable
     public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         let publisher = triggerPublisher(for: route)
         let result = PassthroughSubject<ViewTransitionContext, Error>()

@@ -50,9 +50,9 @@ public struct ViewTransition: ViewTransitionContext {
     func finalize() -> Payload {
         var result = payload
         
-        result.mutateViewInPlace({
-            $0.environmentInPlace(environmentInsertions)
-        })
+        result.mutateViewInPlace {
+            $0 = $0.environment(environmentInsertions)
+        }
         
         return result
     }
@@ -95,7 +95,7 @@ extension ViewTransition {
     }
 }
 
-// MARK: - Conformances -
+// MARK: - Conformances
 
 extension ViewTransition: CustomStringConvertible {
     public var description: String {
@@ -134,110 +134,89 @@ extension ViewTransition: CustomStringConvertible {
     }
 }
 
-// MARK: - API -
+// MARK: - API
 
 extension ViewTransition {
-    @inlinable
-    public static func present<V: View>(_ view: V) -> ViewTransition {
+    public static func present<V: View>(_ view: V) -> Self {
         .init(payload: ViewTransition.Payload.present, view: view)
     }
     
-    @inlinable
-    public static func present(_ view: AnyPresentationView) -> ViewTransition {
+    public static func present(_ view: AnyPresentationView) -> Self {
         .init(payload: ViewTransition.Payload.present, view: view)
     }
     
-    @inlinable
-    public static func replace<V: View>(with view: V) -> ViewTransition {
+    public static func replace<V: View>(with view: V) -> Self {
         .init(payload: ViewTransition.Payload.replace, view: view)
     }
     
-    @inlinable
-    public static func replace(with view: AnyPresentationView) -> ViewTransition {
+    public static func replace(with view: AnyPresentationView) -> Self {
         .init(payload: ViewTransition.Payload.replace, view: view)
     }
     
-    @inlinable
-    public static var dismiss: ViewTransition {
+    public static var dismiss: Self {
         .init(payload: .dismiss)
     }
     
-    @inlinable
-    public static func dismissView<H: Hashable>(named name: H) -> ViewTransition {
+    public static func dismissView<H: Hashable>(named name: H) -> Self {
         .init(payload: .dismissView(named: .init(name)))
     }
     
-    @inlinable
-    public static func push<V: View>(_ view: V) -> ViewTransition {
+    public static func push<V: View>(_ view: V) -> Self {
         .init(payload: ViewTransition.Payload.push, view: view)
     }
     
-    @inlinable
-    public static func push(_ view: AnyPresentationView) -> ViewTransition {
+    public static func push(_ view: AnyPresentationView) -> Self {
         .init(payload: ViewTransition.Payload.push, view: view)
     }
     
-    @inlinable
-    public static func pushOrPresent<V: View>(_ view: V) -> ViewTransition {
+    public static func pushOrPresent<V: View>(_ view: V) -> Self {
         .init(payload: ViewTransition.Payload.pushOrPresent, view: view)
     }
     
-    @inlinable
-    public static func pushOrPresent(_ view: AnyPresentationView) -> ViewTransition {
+    public static func pushOrPresent(_ view: AnyPresentationView) -> Self {
         .init(payload: ViewTransition.Payload.pushOrPresent, view: view)
     }
     
-    @inlinable
-    public static var pop: ViewTransition {
+    public static var pop: Self {
         .init(payload: .pop)
     }
     
-    @inlinable
-    public static var popToRoot: ViewTransition {
+    public static var popToRoot: Self {
         .init(payload: .popToRoot)
     }
     
-    @inlinable
-    public static var popOrDismiss: ViewTransition {
+    public static var popOrDismiss: Self {
         .init(payload: .popOrDismiss)
     }
     
-    @inlinable
-    public static var popToRootOrDismiss: ViewTransition {
+    public static var popToRootOrDismiss: Self {
         .init(payload: .popToRootOrDismiss)
     }
     
-    @inlinable
-    public static func set<V: View>(_ view: V) -> ViewTransition {
+    public static func set<V: View>(_ view: V) -> Self {
         .init(payload: ViewTransition.Payload.set, view: view)
     }
     
-    @inlinable
-    public static func set(_ view: AnyPresentationView) -> ViewTransition {
+    public static func set(_ view: AnyPresentationView) -> Self {
         .init(payload: ViewTransition.Payload.set, view: view)
     }
     
-    @inlinable
-    public static func setRoot<V: View>(_ view: V) -> ViewTransition {
+    public static func setRoot<V: View>(_ view: V) -> Self {
         .init(payload: ViewTransition.Payload.setRoot, view: view)
     }
     
-    @inlinable
-    public static func setRoot(_ view: AnyPresentationView) -> ViewTransition {
+    public static func setRoot(_ view: AnyPresentationView) -> Self {
         .init(payload: ViewTransition.Payload.setRoot, view: view)
     }
     
-    @inlinable
-    public static func linear(_ transitions: [ViewTransition]) -> ViewTransition {
+    public static func linear(_ transitions: [ViewTransition]) -> Self {
         .init(payload: .linear(transitions))
     }
     
-    @inlinable
-    public static func linear(_ transitions: ViewTransition...) -> ViewTransition {
+    public static func linear(_ transitions: ViewTransition...) -> Self {
         linear(transitions)
     }
     
-    @inlinable
     internal static func custom(
         _ body: @escaping () -> AnyPublisher<ViewTransitionContext, Swift.Error>
     ) -> ViewTransition {
@@ -271,14 +250,13 @@ extension ViewTransition {
         }
     }
     
-    @inlinable
-    public static var none: ViewTransition {
+    public static var none: Self {
         .init(payload: .none)
     }
 }
 
 extension ViewTransition {
-    public func environment(_ builder: EnvironmentInsertions) -> ViewTransition {
+    public func environment(_ builder: EnvironmentInsertions) -> Self {
         var result = self
         
         result.environmentInsertions.merge(builder)
@@ -286,13 +264,15 @@ extension ViewTransition {
         return result
     }
     
-    public func mergeCoordinator<VC: ViewCoordinator>(_ coordinator: VC) -> Self {
+    public func merge<Coordinator: ViewCoordinator>(
+        coordinator: Coordinator
+    ) -> Self {
         self.environment(.object(coordinator))
             .environment(.object(AnyViewCoordinator(coordinator)))
     }
 }
 
-// MARK: - Helpers -
+// MARK: - Helpers
 
 extension ViewTransition.Payload {
     mutating func mutateViewInPlace(_ body: (inout AnyPresentationView) -> Void) {

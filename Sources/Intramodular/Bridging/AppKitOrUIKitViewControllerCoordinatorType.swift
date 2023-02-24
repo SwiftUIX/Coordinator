@@ -9,15 +9,11 @@ import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 
-public protocol _opaque_UIViewControllerCoordinator: AnyObject {
+public protocol AppKitOrUIKitViewControllerCoordinatorType: ViewCoordinator {
     var rootViewController: UIViewController? { get set }
 }
 
-public protocol UIViewControllerCoordinatorProtocol: _opaque_UIViewControllerCoordinator, ViewCoordinator {
-    var rootViewController: UIViewController? { get set }
-}
-
-open class UIViewControllerCoordinator<Route>: BaseViewCoordinator<Route>, DynamicViewPresenter, UIViewControllerCoordinatorProtocol {
+open class UIViewControllerCoordinator<Route>: _AppKitOrUIKitViewCoordinatorBase<Route>, DynamicViewPresenter, AppKitOrUIKitViewControllerCoordinatorType {
     enum TriggerError: Error {
         case rootViewControllerMissing
     }

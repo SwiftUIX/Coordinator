@@ -18,7 +18,7 @@ public protocol ViewCoordinator: EnvironmentPropagator, ObservableObject {
     func transition(for: Route) -> Transition
 }
 
-// MARK: - API -
+// MARK: - API
 
 extension ActionLabelView {
     public init<Coordinator: ViewCoordinator>(

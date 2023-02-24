@@ -213,7 +213,7 @@ extension ViewTransition {
         animated: Bool,
         coordinator: VC
     ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
-        let transition = mergeCoordinator(coordinator)
+        let transition = merge(coordinator: coordinator)
         
         if case .custom(let trigger) = transition.finalize() {
             return trigger()

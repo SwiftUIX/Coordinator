@@ -6,13 +6,12 @@ import Combine
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
-
 extension ViewTransition {
-    func triggerPublisher<VC: ViewCoordinator>(
-        in window: UIWindow,
-        coordinator: VC
+    func triggerPublisher<Coordinator: ViewCoordinator>(
+        in window: AppKitOrUIKitWindow,
+        coordinator: Coordinator
     ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
-        let transition = mergeCoordinator(coordinator)
+        let transition = merge(coordinator: coordinator)
         let animated = transition.animated
         
         if case .custom(let trigger) = transition.finalize() {
@@ -41,5 +40,4 @@ extension ViewTransition {
         .eraseToAnyPublisher()
     }
 }
-
 #endif

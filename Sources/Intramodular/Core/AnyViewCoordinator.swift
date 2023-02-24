@@ -51,11 +51,11 @@ public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCo
     #if os(iOS) || os(macOS) || os(tvOS)
     func _setViewController(_ viewController: AppKitOrUIKitViewController) {
         #if os(iOS) || os(tvOS)
-        if let base = base as? _opaque_UIViewControllerCoordinator {
+        if let base = base as? any AppKitOrUIKitViewControllerCoordinatorType {
             if base.rootViewController == nil {
                 base.rootViewController = viewController
             }
-        } else if let base = base as? _opaque_UIWindowCoordinator {
+        } else if let base = base as? any AppKitOrUIKitWindowCoordinatorType {
             if base.window == nil {
                 base.window = viewController.view.window
             }

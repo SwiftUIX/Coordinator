@@ -5,12 +5,13 @@
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
-
-struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: UIViewControllerRepresentable {
+struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: AppKitOrUIKitViewControllerRepresentable {
+    public typealias AppKitOrUIKitViewControllerType = CocoaHostingController<AnyPresentationView>
+    
     let rootView: Content
     let transitionImpl: (Route) -> ViewTransition
     
-    func makeUIViewController(context: Context) -> some UIViewController {
+    func makeAppKitOrUIKitViewController(context: Context) -> AppKitOrUIKitViewControllerType {
         let viewController = CocoaHostingController(
             mainView: AnyPresentationView(
                 rootView.environmentObject(AnyViewCoordinator(context.coordinator))
@@ -22,8 +23,11 @@ struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: UIViewCo
         return viewController
     }
     
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-        context.coordinator.rootViewController = uiViewController
+    func updateAppKitOrUIKitViewController(
+        _ viewController: AppKitOrUIKitViewControllerType,
+        context: Context
+    ) {
+        context.coordinator.rootViewController = viewController
         context.coordinator.transitionImpl = transitionImpl
     }
     
@@ -59,7 +63,7 @@ struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewController
         context.coordinator.transitionImpl = transitionImpl
     }
     
-    final class Coordinator: UIWindowCoordinator<Route> {
+    final class Coordinator: AppKitOrUIKitWindowCoordinator<Route> {
         var transitionImpl: (Route) -> ViewTransition = { _ in .none }
         
         override func transition(for route: Route) -> ViewTransition {
@@ -71,9 +75,11 @@ struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewController
         .init(window: nil)
     }
 }
+#endif
 
-// MARK: - API -
+// MARK: - API
 
+#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 extension View {
     public func coordinate<Route: Hashable>(
         _: Route.Type,
@@ -82,5 +88,4 @@ extension View {
         _AdHocViewControllerCoordinator(rootView: self, transitionImpl: transition)
     }
 }
-
 #endif

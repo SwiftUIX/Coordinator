@@ -7,16 +7,15 @@ import Foundation
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+public typealias UIWindowCoordinator = AppKitOrUIKitWindowCoordinator
+#endif
 
-public protocol _opaque_UIWindowCoordinator: AnyObject {
+#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+public protocol AppKitOrUIKitWindowCoordinatorType: ViewCoordinator {
     var window: UIWindow? { get set }
 }
 
-public protocol UIWindowCoordinatorProtocol: _opaque_UIWindowCoordinator, ViewCoordinator {
-    var window: UIWindow? { get set }
-}
-
-open class UIWindowCoordinator<Route>: BaseViewCoordinator<Route>, _opaque_UIWindowCoordinator {
+open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorBase<Route> {
     public var window: UIWindow? {
         willSet {
             objectWillChange.send()
@@ -37,7 +36,7 @@ open class UIWindowCoordinator<Route>: BaseViewCoordinator<Route>, _opaque_UIWin
         self.window = window
     }
     
-    convenience public init<Route: Hashable>(parent: UIWindowCoordinator<Route>) {
+    convenience public init<Route: Hashable>(parent: AppKitOrUIKitWindowCoordinator<Route>) {
         self.init(window: parent.window)
         
         parent.addChild(self)
@@ -71,7 +70,7 @@ open class UIWindowCoordinator<Route>: BaseViewCoordinator<Route>, _opaque_UIWin
     }
 }
 
-extension UIWindowCoordinator: DynamicViewPresenter {
+extension AppKitOrUIKitWindowCoordinator: DynamicViewPresenter {
     public var presenter: DynamicViewPresenter? {
         nil
     }
@@ -80,19 +79,25 @@ extension UIWindowCoordinator: DynamicViewPresenter {
         window?.presented
     }
     
-    final public func present(_ presentation: AnyModalPresentation, completion: @escaping () -> Void) {
+    final public func present(
+        _ presentation: AnyModalPresentation,
+        completion: @escaping () -> Void
+    ) {
         window?.present(presentation, completion: completion)
     }
     
     @discardableResult
-    final public func dismiss(withAnimation animation: Animation?) -> Future<Bool, Never> {
+    final public func dismiss(
+        withAnimation animation: Animation?
+    ) -> Future<Bool, Never> {
         window?.dismiss(withAnimation: animation) ?? .just(.success(false))
     }
     
     @discardableResult
-    final public func dismissSelf(withAnimation animation: Animation?) -> Future<Bool, Never> {
+    final public func dismissSelf(
+        withAnimation animation: Animation?
+    ) -> Future<Bool, Never> {
         window?.dismissSelf(withAnimation: animation)  ?? .just(.success(false))
     }
 }
-
 #endif

@@ -17,7 +17,7 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
         let result: Any? = nil
         ?? _wrappedValue0
         ?? _wrappedValue1?.base
-        ?? OpaqueBaseViewCoordinator
+        ?? _opaque_AppKitOrUIKitViewCoordinatorBase
             ._runtimeLookup[ObjectIdentifier(WrappedValue.self)]?.takeUnretainedValue()
         
         guard let result = result else {
@@ -46,18 +46,18 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
     }
 }
 
-extension View {
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+extension View {
     public func coordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>(
         _ coordinator: Coordinator
     ) -> some View {
         modifier(AttachUIViewControllerCoordinator(coordinator: coordinator))
     }
     
-    public func coordinator<Route, Coordinator: UIWindowCoordinator<Route>>(
+    public func coordinator<Route, Coordinator: AppKitOrUIKitWindowCoordinator<Route>>(
         _ coordinator: Coordinator
     ) -> some View {
-        modifier(AttachUIWindowCoordinator(coordinator: coordinator))
+        modifier(AttachAppKitOrUIKitWindowCoordinator(coordinator: coordinator))
     }
     
     public func coordinator<Coordinator: ViewCoordinator>(
@@ -65,8 +65,8 @@ extension View {
     ) -> some View {
         modifier(AttachViewCoordinator(coordinator: coordinator))
     }
-#endif
 }
+#endif
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
 private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>: ViewModifier {
@@ -91,7 +91,7 @@ private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewContr
     }
 }
 
-private struct AttachUIWindowCoordinator<Route, Coordinator: UIWindowCoordinator<Route>>: ViewModifier {
+private struct AttachAppKitOrUIKitWindowCoordinator<Route, Coordinator: AppKitOrUIKitWindowCoordinator<Route>>: ViewModifier {
     @ObservedObject var coordinator: Coordinator
     
     func body(content: Content) -> some View {
