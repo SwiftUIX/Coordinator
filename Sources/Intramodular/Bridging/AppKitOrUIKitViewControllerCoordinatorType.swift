@@ -5,6 +5,7 @@
 import Diagnostics
 import Merge
 import Foundation
+import Swallow
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)

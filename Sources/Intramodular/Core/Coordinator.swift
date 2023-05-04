@@ -9,8 +9,8 @@ import SwiftUIX
 public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, PropertyWrapper {
     @Environment(\._environmentInsertions) var environmentInsertions
     
-    @OptionalEnvironmentObject public var _wrappedValue0: WrappedValue?
-    @OptionalEnvironmentObject public var _wrappedValue1: AnyViewCoordinator<WrappedValue.Route>?
+    @EnvironmentObject.Optional public var _wrappedValue0: WrappedValue?
+    @EnvironmentObject.Optional public var _wrappedValue1: AnyViewCoordinator<WrappedValue.Route>?
     
     @inline(never)
     public var wrappedValue: WrappedValue {
