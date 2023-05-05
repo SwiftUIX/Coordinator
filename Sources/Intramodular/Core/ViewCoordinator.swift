@@ -12,7 +12,9 @@ public protocol ViewCoordinator: EnvironmentPropagator, ObservableObject {
     typealias Transition = ViewTransition
     
     func triggerPublisher(for _: Route) -> AnyPublisher<ViewTransitionContext, Error>
+    
     @discardableResult
+    @MainActor
     func trigger(_: Route) -> AnyPublisher<ViewTransitionContext, Error>
     
     func transition(for: Route) -> Transition
@@ -26,6 +28,13 @@ extension ActionLabelView {
         in coordinator: Coordinator,
         @ViewBuilder label: () -> Label
     ) {
-        self.init(action: { coordinator.trigger(route) }, label: label)
+        self.init(
+            action: {
+                Task { @MainActor in
+                    coordinator.trigger(route)
+                }
+            },
+            label: label
+        )
     }
 }

@@ -5,7 +5,8 @@
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
-struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>: AppKitOrUIKitViewControllerRepresentable {
+struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>:
+    AppKitOrUIKitViewControllerRepresentable {
     public typealias AppKitOrUIKitViewControllerType = CocoaHostingController<AnyPresentationView>
     
     let rootView: Content

@@ -231,7 +231,7 @@ extension ViewTransition {
     }
     
     public static func custom(
-        _ body: @escaping () -> Void
+        @_implicitSelfCapture _ body: @escaping () -> Void
     ) -> ViewTransition {
         // FIXME: Set a correct view transition context.
         struct CustomViewTransitionContext: ViewTransitionContext {

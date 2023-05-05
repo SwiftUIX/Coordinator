@@ -17,8 +17,7 @@ public struct Coordinator<WrappedValue: ViewCoordinator>: DynamicProperty, Prope
         let result: Any? = nil
         ?? _wrappedValue0
         ?? _wrappedValue1?.base
-        ?? _opaque_AppKitOrUIKitViewCoordinatorBase
-            ._runtimeLookup[ObjectIdentifier(WrappedValue.self)]?.takeUnretainedValue()
+        ?? _coordinatorRuntimeLookup[ObjectIdentifier(WrappedValue.self)]?.takeUnretainedValue()
         
         guard let result = result else {
             fatalError("Could not resolve a coordinator for \(String(describing: WrappedValue.Route.self)) in the view hierarchy. Try adding `.coordinator(myCoordinator)` in your view hierarchy.")

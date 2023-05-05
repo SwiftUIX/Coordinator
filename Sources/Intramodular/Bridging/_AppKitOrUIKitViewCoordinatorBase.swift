@@ -5,9 +5,10 @@
 import Merge
 import SwiftUIX
 
+var _coordinatorRuntimeLookup: [ObjectIdentifier: Unmanaged<_opaque_AppKitOrUIKitViewCoordinatorBase>] = [:]
+
+@MainActor
 open class _opaque_AppKitOrUIKitViewCoordinatorBase {
-    static var _runtimeLookup: [ObjectIdentifier: Unmanaged<_opaque_AppKitOrUIKitViewCoordinatorBase>] = [:]
-    
     fileprivate let cancellables = Cancellables()
     
     open var environmentInsertions = EnvironmentInsertions()
@@ -15,11 +16,11 @@ open class _opaque_AppKitOrUIKitViewCoordinatorBase {
     open internal(set) var children: [DynamicViewPresentable] = []
     
     public init() {
-        Self._runtimeLookup[ObjectIdentifier(Self.self)] = Unmanaged.passUnretained(self)
+        _coordinatorRuntimeLookup[ObjectIdentifier(Self.self)] = Unmanaged.passUnretained(self)
     }
     
     deinit {
-        Self._runtimeLookup[ObjectIdentifier(Self.self)] = nil
+        _coordinatorRuntimeLookup[ObjectIdentifier(Self.self)] = nil
     }
     
     func becomeChild(of parent: _opaque_AppKitOrUIKitViewCoordinatorBase) {

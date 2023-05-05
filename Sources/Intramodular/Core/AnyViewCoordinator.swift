@@ -24,9 +24,11 @@ public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCo
     
     private let transitionImpl: (Route) -> ViewTransition
     private let triggerPublisherImpl: (Route) -> AnyPublisher<ViewTransitionContext, Error>
-    private let triggerImpl: (Route) -> AnyPublisher<ViewTransitionContext, Error>
+    private let triggerImpl: @MainActor (Route) -> AnyPublisher<ViewTransitionContext, Error>
     
-    public init<VC: ViewCoordinator>(_ coordinator: VC) where VC.Route == Route {
+    public init<VC: ViewCoordinator>(
+        _ coordinator: VC
+    ) where VC.Route == Route {
         self.base = coordinator
         
         self.transitionImpl = coordinator.transition
@@ -44,11 +46,13 @@ public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCo
     }
     
     @discardableResult
+    @MainActor
     public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
         triggerImpl(route)
     }
 
     #if os(iOS) || os(macOS) || os(tvOS)
+    @MainActor
     func _setViewController(_ viewController: AppKitOrUIKitViewController) {
         #if os(iOS) || os(tvOS)
         if let base = base as? any AppKitOrUIKitViewControllerCoordinatorType {
