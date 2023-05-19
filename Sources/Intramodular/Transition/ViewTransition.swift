@@ -193,8 +193,14 @@ extension ViewTransition {
         .init(payload: .popToRootOrDismiss)
     }
     
-    public static func set<V: View>(_ view: V) -> Self {
+    public static func set<Content: View>(_ view: Content) -> Self {
         .init(payload: ViewTransition.Payload.set, view: view)
+    }
+    
+    public static func set<V: View>(
+        @ViewBuilder _ view: () -> V
+    ) -> Self {
+        .init(payload: ViewTransition.Payload.set, view: view())
     }
     
     public static func set(_ view: AnyPresentationView) -> Self {
