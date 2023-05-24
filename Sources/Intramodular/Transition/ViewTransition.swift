@@ -17,28 +17,27 @@ public struct ViewTransition: ViewTransitionContext {
     
     private var payload: Payload
     
-    @usableFromInline
     var animated: Bool = true
-    @usableFromInline
     var payloadViewName: AnyHashable?
-    @usableFromInline
     var payloadViewType: Any.Type?
-    @usableFromInline
     var environmentInsertions: EnvironmentInsertions
     
-    @usableFromInline
-    init(payload: (AnyPresentationView) -> ViewTransition.Payload, view: AnyPresentationView) {
+    init(
+        payload: (AnyPresentationView) -> ViewTransition.Payload,
+        view: AnyPresentationView
+    ) {
         self.payload = payload(view)
         self.payloadViewType = type(of: view)
         self.environmentInsertions = .init()
     }
     
-    @usableFromInline
-    init<V: View>(payload: (AnyPresentationView) -> ViewTransition.Payload, view: V) {
+    init<V: View>(
+        payload: (AnyPresentationView) -> ViewTransition.Payload,
+        view: V
+    ) {
         self.init(payload: payload, view: .init(view))
     }
     
-    @usableFromInline
     init(payload: ViewTransition.Payload) {
         self.payload = payload
         self.payloadViewName = nil
@@ -46,7 +45,6 @@ public struct ViewTransition: ViewTransitionContext {
         self.environmentInsertions = .init()
     }
     
-    @usableFromInline
     func finalize() -> Payload {
         var result = payload
         
@@ -193,20 +191,40 @@ extension ViewTransition {
         .init(payload: .popToRootOrDismiss)
     }
     
-    public static func set<Content: View>(_ view: Content) -> Self {
-        .init(payload: ViewTransition.Payload.set, view: view)
+    public static func set(
+        _ view: AnyPresentationView,
+        transition: _WindowSetTransition? = nil
+    ) -> Self {
+        .init(payload: ViewTransition.Payload.set(view, transition: transition))
+    }
+
+    public static func set<Content: View>(
+        _ view: Content,
+        transition: _WindowSetTransition? = nil
+    ) -> Self {
+        set(AnyPresentationView(view), transition: transition)
     }
     
     public static func set<V: View>(
+        transition: _WindowSetTransition? = nil,
         @ViewBuilder _ view: () -> V
     ) -> Self {
-        .init(payload: ViewTransition.Payload.set, view: view())
+        set(view(), transition: transition)
     }
     
-    public static func set(_ view: AnyPresentationView) -> Self {
-        .init(payload: ViewTransition.Payload.set, view: view)
+    public static func set<V: View>(
+        animation: AppKitOrUIKitView.AnimationOptions? = nil,
+        duration: Double = 0.3,
+        @ViewBuilder _ view: () -> V
+    ) -> Self {
+        set(
+            view(),
+            transition: animation.map {
+                _WindowSetTransition._appKitOrUIKitBlockAnimation($0, duration: duration)
+            }
+        )
     }
-    
+
     public static func setRoot<V: View>(_ view: V) -> Self {
         .init(payload: ViewTransition.Payload.setRoot, view: view)
     }

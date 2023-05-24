@@ -6,6 +6,10 @@ import Merge
 import Foundation
 import SwiftUIX
 
+public enum _WindowSetTransition {
+    case _appKitOrUIKitBlockAnimation(AppKitOrUIKitView.AnimationOptions, duration: Double)
+}
+
 extension ViewTransition {
     @usableFromInline
     enum Payload {
@@ -21,7 +25,7 @@ extension ViewTransition {
         case popOrDismiss
         case popToRootOrDismiss
         
-        case set(AnyPresentationView)
+        case set(AnyPresentationView, transition: _WindowSetTransition?)
         case setRoot(AnyPresentationView)
         
         case linear([ViewTransition])
@@ -57,7 +61,7 @@ extension ViewTransition.Payload {
                     return nil
                 case .popToRootOrDismiss:
                     return nil
-                case .set(let view):
+                case .set(let view, _):
                     return view
                 case .setRoot(let view):
                     return view
@@ -94,8 +98,8 @@ extension ViewTransition.Payload {
                     break
                 case .popToRootOrDismiss:
                     break
-                case .set:
-                    self = .set(newValue)
+                case .set(_, let transition):
+                    self = .set(newValue, transition: transition)
                 case .setRoot:
                     self = .setRoot(newValue)
                 case .linear:

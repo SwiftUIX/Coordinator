@@ -3,6 +3,7 @@
 //
 
 import Combine
+import Swallow
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
@@ -20,15 +21,36 @@ extension ViewTransition {
         
         return Future { attemptToFulfill in
             switch transition.finalize() {
-                case .set(let view): do {
-                    window.rootViewController = CocoaHostingController(mainView: view)
-                    
-                    attemptToFulfill(.success(self))
+                case .set(let view, let transition): do {
+                    if let transition {
+                        switch transition {
+                            case ._appKitOrUIKitBlockAnimation(let animation, let duration):
+                                window.rootViewController = CocoaHostingController(mainView: view)
+
+                                UIView.transition(
+                                    with: window,
+                                    duration: duration,
+                                    options: animation,
+                                    animations: nil
+                                ) { completion in
+                                    if completion {
+                                        attemptToFulfill(.success(self))
+                                    } else {
+                                        attemptToFulfill(.failure(_PlaceholderError()))
+                                    }
+                                }
+                        }
+                    } else {
+                        window.rootViewController = CocoaHostingController(mainView: view)
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1)) {
+                            attemptToFulfill(.success(self))
+                        }
+                    }
                 }
-                    
                 default: do {
                     do {
-                        try window.rootViewController!.trigger(transition, animated: animated) {
+                        try window.rootViewController.unwrap().trigger(transition, animated: animated) {
                             attemptToFulfill(.success(self))
                         }
                     } catch {

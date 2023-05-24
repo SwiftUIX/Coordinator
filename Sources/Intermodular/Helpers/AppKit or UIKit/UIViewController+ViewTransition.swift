@@ -144,7 +144,7 @@ extension UIViewController {
                 }
             }
                 
-            case .set(let view): do {
+            case .set(let view, _): do {
                 if let viewController = nearestNavigationController {
                     viewController.setViewControllers([view._toAppKitOrUIKitViewController()], animated: animated)
                     
@@ -173,7 +173,9 @@ extension UIViewController {
                 
                 var _error: Error?
                 
-                try trigger(transitions.removeFirst(), animated: animated) {
+                let firstTransition = transitions.removeFirst()
+                
+                try trigger(firstTransition, animated: animated) {
                     do {
                         try self.trigger(.linear(transitions), animated: animated) {
                             completion()
@@ -189,7 +191,7 @@ extension UIViewController {
             }
                 
             case .custom: do {
-                fatalError()
+                throw Never.Reason.unavailable._runtimeIssue()
             }
                 
             case .none:
