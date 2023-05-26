@@ -52,22 +52,17 @@ private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewContr
     let onConnect: () -> Void
     
     func body(content: Content) -> some View {
-        PassthroughView {
-            if coordinator.rootViewController == nil {
-                ZeroSizeView()
-            } else {
-                content.environment(coordinator.environmentInsertions)
+        content
+            .environment(coordinator.environmentInsertions)
+            .environmentObject(coordinator)
+            .environmentObject(AnyViewCoordinator(coordinator))
+            .onAppKitOrUIKitViewControllerResolution { viewController in
+                DispatchQueue.main.async {
+                    coordinator.rootViewController = viewController
+                    
+                    onConnect()
+                }
             }
-        }
-        .environmentObject(coordinator)
-        .environmentObject(AnyViewCoordinator(coordinator))
-        .onAppKitOrUIKitViewControllerResolution { viewController in
-            DispatchQueue.main.async {
-                coordinator.rootViewController = viewController
-                
-                onConnect()
-            }
-        }
     }
 }
 
@@ -75,24 +70,18 @@ private struct AttachAppKitOrUIKitWindowCoordinator<Route, Coordinator: AppKitOr
     @ObservedObject var coordinator: Coordinator
     
     let onConnect: () -> Void
-
+    
     func body(content: Content) -> some View {
-        PassthroughView {
-            if coordinator.window == nil {
-                ZeroSizeView()
-            } else {
-                content
+        content
+            .environmentObject(coordinator)
+            .environmentObject(AnyViewCoordinator(coordinator))
+            .onAppKitOrUIKitViewControllerResolution { viewController in
+                DispatchQueue.main.async {
+                    coordinator.window = viewController.view.window
+                    
+                    onConnect()
+                }
             }
-        }
-        .environmentObject(coordinator)
-        .environmentObject(AnyViewCoordinator(coordinator))
-        .onAppKitOrUIKitViewControllerResolution { viewController in
-            DispatchQueue.main.async {
-                coordinator.window = viewController.view.window
-                
-                onConnect()
-            }
-        }
     }
 }
 
@@ -100,20 +89,18 @@ private struct AttachViewCoordinator<Coordinator: ViewCoordinator>: ViewModifier
     @ObservedObject var coordinator: Coordinator
     
     let onConnect: () -> Void
-
+    
     func body(content: Content) -> some View {
-        PassthroughView {
-            content
-        }
-        .environmentObject(coordinator)
-        .environmentObject((coordinator as? AnyViewCoordinator<Coordinator.Route>) ?? AnyViewCoordinator(coordinator))
-        .onAppKitOrUIKitViewControllerResolution { viewController in
-            DispatchQueue.main.async {
-                AnyViewCoordinator(coordinator)._setViewController(viewController)
-                
-                onConnect()
+        content
+            .environmentObject(coordinator)
+            .environmentObject((coordinator as? AnyViewCoordinator<Coordinator.Route>) ?? AnyViewCoordinator(coordinator))
+            .onAppKitOrUIKitViewControllerResolution { viewController in
+                DispatchQueue.main.async {
+                    AnyViewCoordinator(coordinator)._setViewController(viewController)
+                    
+                    onConnect()
+                }
             }
-        }
     }
 }
 #endif
