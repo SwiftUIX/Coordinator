@@ -19,22 +19,3 @@ public protocol ViewCoordinator: EnvironmentPropagator, ObservableObject {
     
     func transition(for: Route) -> Transition
 }
-
-// MARK: - API
-
-extension ActionLabelView {
-    public init<Coordinator: ViewCoordinator>(
-        trigger route: Coordinator.Route,
-        in coordinator: Coordinator,
-        @ViewBuilder label: () -> Label
-    ) {
-        self.init(
-            action: {
-                Task { @MainActor in
-                    coordinator.trigger(route)
-                }
-            },
-            label: label
-        )
-    }
-}
