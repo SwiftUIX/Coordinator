@@ -4,6 +4,7 @@
 
 import Merge
 import Foundation
+import Swallow
 import SwiftUIX
 
 public struct ViewTransition: ViewTransitionContext {
@@ -198,6 +199,8 @@ extension ViewTransition {
         .init(payload: ViewTransition.Payload.set(view, transition: transition))
     }
 
+    @_transparent
+    @inline(__always)
     public static func set<Content: View>(
         _ view: Content,
         transition: _WindowSetTransition? = nil
@@ -205,6 +208,8 @@ extension ViewTransition {
         set(AnyPresentationView(view), transition: transition)
     }
     
+    @_transparent
+    @inline(__always)
     public static func set<V: View>(
         transition: _WindowSetTransition? = nil,
         @ViewBuilder _ view: () -> V
@@ -212,16 +217,26 @@ extension ViewTransition {
         set(view(), transition: transition)
     }
     
+    @_transparent
+    @inline(__always)
     public static func set<V: View>(
         animation: AppKitOrUIKitView.AnimationOptions? = nil,
         duration: Double = 0.3,
         @ViewBuilder _ view: () -> V
     ) -> Self {
-        set(
+        let transition = animation.map {
+            _WindowSetTransition._appKitOrUIKitBlockAnimation($0, duration: duration)
+        }
+        
+        do {
+            try transition?._validate()
+        } catch {
+            runtimeIssue(error)
+        }
+
+        return set(
             view(),
-            transition: animation.map {
-                _WindowSetTransition._appKitOrUIKitBlockAnimation($0, duration: duration)
-            }
+            transition: transition
         )
     }
 

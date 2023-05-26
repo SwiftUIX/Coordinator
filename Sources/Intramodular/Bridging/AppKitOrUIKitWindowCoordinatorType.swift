@@ -18,8 +18,16 @@ public protocol AppKitOrUIKitWindowCoordinatorType: ViewCoordinator {
 open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorBase<Route> {
     public var window: UIWindow? {
         willSet {
+            guard window !== newValue else {
+                return
+            }
+            
             objectWillChange.send()
         } didSet {
+            guard oldValue !== window else {
+                return
+            }
+            
             updateAllChildren()
         }
     }
@@ -47,7 +55,9 @@ open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorB
     }
     
     @discardableResult
-    override public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
+    override public func triggerPublisher(
+        for route: Route
+    ) -> AnyPublisher<ViewTransitionContext, Error> {
         do {
             let window = try self.window.unwrap()
             
@@ -57,7 +67,11 @@ open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorB
                 .handleOutput { [weak self] _ in
                     self?.updateAllChildren()
                 }
-                .handleSubscription({ _ in window.makeKeyAndVisible() })
+                .handleSubscription { _ in
+                    if !window.isKeyWindow {
+                        window.makeKeyAndVisible()
+                    }
+                }
                 .eraseToAnyPublisher()
         } catch {
             return .failure(error)
@@ -65,7 +79,9 @@ open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorB
     }
     
     @discardableResult
-    override public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
+    override public func trigger(
+        _ route: Route
+    ) -> AnyPublisher<ViewTransitionContext, Error> {
         super.trigger(route)
     }
 }

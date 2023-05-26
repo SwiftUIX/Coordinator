@@ -7,7 +7,21 @@ import Foundation
 import SwiftUIX
 
 public enum _WindowSetTransition {
+    public enum _Error: Error {
+        case _invalidAppKitOrUIKitBlockAnimation(AppKitOrUIKitView.AnimationOptions)
+    }
+    
     case _appKitOrUIKitBlockAnimation(AppKitOrUIKitView.AnimationOptions, duration: Double)
+    
+    @usableFromInline
+    func _validate() throws {
+        switch self {
+            case ._appKitOrUIKitBlockAnimation(let options, _):
+                if options == .curveLinear {
+                    throw _Error._invalidAppKitOrUIKitBlockAnimation(options)
+                }
+        }
+    }
 }
 
 extension ViewTransition {

@@ -21,12 +21,16 @@ extension ViewTransition {
         
         return Future { attemptToFulfill in
             switch transition.finalize() {
-                case .set(let view, let transition): do {
+                case .set(let view, let transition): do {                    
                     if let transition {
                         switch transition {
                             case ._appKitOrUIKitBlockAnimation(let animation, let duration):
                                 window.rootViewController = CocoaHostingController(mainView: view)
-
+                                
+                                if !window.isKeyWindow {
+                                    window.makeKeyAndVisible()
+                                }
+                                
                                 UIView.transition(
                                     with: window,
                                     duration: duration,
