@@ -3,6 +3,7 @@
 //
 
 import Combine
+import Swallow
 import SwiftUIX
 
 #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
@@ -23,7 +24,11 @@ extension UIViewController {
             case .replace(let view): do {
                 if let viewController = topmostPresentedViewController?.presentingViewController {
                     viewController.dismiss(animated: animated) {
-                        viewController.presentOnTop(view, named: transition.payloadViewName, animated: animated) {
+                        viewController.presentOnTop(
+                            view,
+                            named: transition.payloadViewName,
+                            animated: animated
+                        ) {
                             completion()
                         }
                     }
@@ -210,6 +215,7 @@ extension UIViewController {
 }
 
 extension ViewTransition {
+    @_transparent
     func triggerPublisher<VC: ViewCoordinator>(
         in controller: UIViewController,
         animated: Bool,
@@ -226,7 +232,7 @@ extension ViewTransition {
                 try controller.trigger(transition, animated: animated) {
                     attemptToFulfill(.success(transition))
                 }
-            } catch {
+            } catch {                
                 attemptToFulfill(.failure(error))
             }
         }

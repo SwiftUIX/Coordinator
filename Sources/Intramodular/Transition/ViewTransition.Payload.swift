@@ -12,7 +12,10 @@ public enum _WindowSetTransition {
     }
     
     case _appKitOrUIKitBlockAnimation(AppKitOrUIKitView.AnimationOptions, duration: Double)
-    
+}
+
+#if os(iOS) || os(tvOS)
+extension _WindowSetTransition {
     @usableFromInline
     func _validate() throws {
         switch self {
@@ -23,6 +26,14 @@ public enum _WindowSetTransition {
         }
     }
 }
+#elseif os(macOS)
+extension _WindowSetTransition {
+    @usableFromInline
+    func _validate() throws {
+
+    }
+}
+#endif
 
 extension ViewTransition {
     @usableFromInline
