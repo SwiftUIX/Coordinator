@@ -36,7 +36,7 @@ public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCo
         self.triggerImpl = coordinator.trigger
     }
     
-    public func transition(for route: Route) -> Transition {
+    public func transition(for route: Route) -> ViewTransition {
         transitionImpl(route)
     }
     
