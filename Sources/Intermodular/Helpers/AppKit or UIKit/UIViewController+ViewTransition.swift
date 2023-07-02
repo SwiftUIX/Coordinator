@@ -196,7 +196,7 @@ extension UIViewController {
             }
                 
             case .custom: do {
-                throw Never.Reason.unavailable._runtimeIssue()
+                throw runtimeIssue(.unavailable)
             }
                 
             case .none:
