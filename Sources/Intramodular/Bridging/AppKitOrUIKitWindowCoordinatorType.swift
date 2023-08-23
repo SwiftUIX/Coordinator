@@ -44,7 +44,7 @@ open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorB
         self.window = window
     }
     
-    convenience public init<Route: Hashable>(parent: AppKitOrUIKitWindowCoordinator<Route>) {
+    convenience public init<T: Hashable>(parent: AppKitOrUIKitWindowCoordinator<T>) {
         self.init(window: parent.window)
         
         parent.addChild(self)
