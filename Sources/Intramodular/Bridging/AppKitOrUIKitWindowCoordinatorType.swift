@@ -6,11 +6,11 @@ import Merge
 import Foundation
 import SwiftUIX
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 public typealias UIWindowCoordinator = AppKitOrUIKitWindowCoordinator
 #endif
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 public protocol AppKitOrUIKitWindowCoordinatorType: ViewCoordinator {
     var window: UIWindow? { get set }
 }

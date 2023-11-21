@@ -28,7 +28,7 @@ open class _opaque_AppKitOrUIKitViewCoordinatorBase {
     }
     
     func update(withParent parent: _opaque_AppKitOrUIKitViewCoordinatorBase) {
-        #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+        #if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
         if let parent = parent as? any AppKitOrUIKitWindowCoordinatorType {
             if let self = self as? any AppKitOrUIKitWindowCoordinatorType {
                 if self.window == nil {

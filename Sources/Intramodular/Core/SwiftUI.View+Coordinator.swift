@@ -5,7 +5,7 @@
 import Swallow
 import SwiftUIX
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 extension View {
     public func coordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>(
         _ coordinator: Coordinator,
@@ -45,7 +45,7 @@ extension View {
 }
 #endif
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 private struct AttachUIViewControllerCoordinator<Route, Coordinator: UIViewControllerCoordinator<Route>>: ViewModifier {
     @ObservedObject var coordinator: Coordinator
     

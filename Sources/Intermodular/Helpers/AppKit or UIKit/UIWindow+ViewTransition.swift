@@ -6,7 +6,7 @@ import Combine
 import Swallow
 import SwiftUIX
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 extension ViewTransition {
     func triggerPublisher<Coordinator: ViewCoordinator>(
         in window: AppKitOrUIKitWindow,

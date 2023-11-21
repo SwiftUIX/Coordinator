@@ -8,7 +8,7 @@ import Foundation
 import Swallow
 import SwiftUIX
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 
 public protocol AppKitOrUIKitViewControllerCoordinatorType: ViewCoordinator {
     var rootViewController: UIViewController? { get set }

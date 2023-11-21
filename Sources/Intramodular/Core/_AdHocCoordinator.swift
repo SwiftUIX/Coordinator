@@ -4,7 +4,7 @@
 
 import SwiftUIX
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 struct _AdHocViewControllerCoordinator<Content: View, Route: Hashable>:
     AppKitOrUIKitViewControllerRepresentable {
     public typealias AppKitOrUIKitViewControllerType = CocoaHostingController<AnyPresentationView>
@@ -80,7 +80,7 @@ struct _AdHocWindowCoordinator<Content: View, Route: Hashable>: UIViewController
 
 // MARK: - API
 
-#if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 extension View {
     public func coordinate<Route: Hashable>(
         _: Route.Type,
