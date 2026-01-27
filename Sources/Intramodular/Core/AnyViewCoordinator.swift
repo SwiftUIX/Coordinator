@@ -23,8 +23,8 @@ public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCo
     }
     
     private let transitionImpl: (Route) -> ViewTransition
-    private let triggerPublisherImpl: (Route) -> AnyPublisher<ViewTransitionContext, Error>
-    private let triggerImpl: @MainActor (Route) -> AnyPublisher<ViewTransitionContext, Error>
+    private let triggerPublisherImpl: (Route, Bool) -> AnyPublisher<ViewTransitionContext, Error>
+    private let triggerImpl: @MainActor (Route, Bool) -> AnyPublisher<ViewTransitionContext, Error>
     
     public init<VC: ViewCoordinator>(
         _ coordinator: VC
@@ -41,14 +41,14 @@ public final class AnyViewCoordinator<Route>: _opaque_AnyViewCoordinator, ViewCo
     }
     
     @discardableResult
-    public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        triggerPublisherImpl(route)
+    public func triggerPublisher(for route: Route, animated: Bool = true) -> AnyPublisher<ViewTransitionContext, Error> {
+        triggerPublisherImpl(route, animated)
     }
     
     @discardableResult
     @MainActor
-    public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        triggerImpl(route)
+    public func trigger(_ route: Route, animated: Bool = true) -> AnyPublisher<ViewTransitionContext, Error> {
+        triggerImpl(route, animated)
     }
 
     #if os(iOS) || os(macOS) || os(tvOS)

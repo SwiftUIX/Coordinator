@@ -55,7 +55,7 @@ extension ViewTransition {
         
         case linear([ViewTransition])
         
-        case custom(() -> AnyPublisher<ViewTransitionContext, Swift.Error>)
+        case custom((_ animated: Bool) -> AnyPublisher<ViewTransitionContext, Swift.Error>)
         
         case none
     }

@@ -114,13 +114,13 @@ open class _AppKitOrUIKitViewCoordinatorBase<Route>: _opaque_AppKitOrUIKitViewCo
         fatalError()
     }
     
-    public func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
+    public func triggerPublisher(for route: Route, animated: Bool) -> AnyPublisher<ViewTransitionContext, Error> {
         Empty().eraseToAnyPublisher()
     }
     
     @discardableResult
-    public func trigger(_ route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
-        let publisher = triggerPublisher(for: route)
+    public func trigger(_ route: Route, animated: Bool = true) -> AnyPublisher<ViewTransitionContext, Error> {
+        let publisher = triggerPublisher(for: route, animated: animated)
         let result = PassthroughSubject<ViewTransitionContext, Error>()
         
         publisher.subscribe(result, in: cancellables)

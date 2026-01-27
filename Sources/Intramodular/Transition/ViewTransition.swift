@@ -18,7 +18,7 @@ public struct ViewTransition: ViewTransitionContext {
     
     private var payload: Payload
     
-    var animated: Bool = true
+    public var animated: Bool = true
     var payloadViewName: AnyHashable?
     var payloadViewType: Any.Type?
     var environmentInsertions: EnvironmentInsertions
@@ -257,30 +257,30 @@ extension ViewTransition {
     }
     
     internal static func custom(
-        _ body: @escaping () -> AnyPublisher<ViewTransitionContext, Swift.Error>
+        _ body: @escaping (Bool) -> AnyPublisher<ViewTransitionContext, Swift.Error>
     ) -> ViewTransition {
         .init(payload: .custom(body))
     }
     
     @available(*, deprecated, renamed: "custom")
     internal static func dynamic(
-        _ body: @escaping () -> Void
+        _ body: @escaping (Bool) -> Void
     ) -> ViewTransition {
         .custom(body)
     }
     
     public static func custom(
-        @_implicitSelfCapture _ body: @escaping () -> Void
+        @_implicitSelfCapture _ body: @escaping (Bool) -> Void
     ) -> ViewTransition {
         // FIXME: Set a correct view transition context.
         struct CustomViewTransitionContext: ViewTransitionContext {
             
         }
         
-        return .custom { () -> AnyPublisher<ViewTransitionContext, Swift.Error> in
+        return .custom { (animated: Bool) -> AnyPublisher<ViewTransitionContext, Swift.Error> in
             Deferred {
                 Future<ViewTransitionContext, Swift.Error> { attemptToFulfill in
-                    body()
+                    body(animated)
                     
                     attemptToFulfill(.success(CustomViewTransitionContext()))
                 }

@@ -53,16 +53,19 @@ open class UIViewControllerCoordinator<Route>: _AppKitOrUIKitViewCoordinatorBase
         fatalError()
     }
     
-    public override func triggerPublisher(for route: Route) -> AnyPublisher<ViewTransitionContext, Error> {
+    public override func triggerPublisher(for route: Route, animated: Bool = true) -> AnyPublisher<ViewTransitionContext, Error> {
         guard let rootViewController = rootViewController else {
             runtimeIssue("Could not resolve a root view controller.")
             
             return .failure(TriggerError.rootViewControllerMissing)
         }
         
-        return transition(for: route)
+        var transition = transition(for: route)
+        transition.animated = animated
+        
+        return transition
             .environment(environmentInsertions)
-            .triggerPublisher(in: rootViewController, animated: true, coordinator: self)
+            .triggerPublisher(in: rootViewController, coordinator: self)
             .handleOutput { [weak self] _ in
                 self?.updateAllChildren()
             }

@@ -11,29 +11,28 @@ import SwiftUIX
 extension UIViewController {
     public func trigger(
         _ transition: ViewTransition,
-        animated: Bool,
         completion: @escaping () -> ()
     ) throws {
         switch transition.finalize() {
             case .present(let view): do {
-                presentOnTop(view, named: transition.payloadViewName, animated: animated) {
+                presentOnTop(view, named: transition.payloadViewName, animated: transition.animated) {
                     completion()
                 }
             }
                 
             case .replace(let view): do {
                 if let viewController = topmostPresentedViewController?.presentingViewController {
-                    viewController.dismiss(animated: animated) {
+                    viewController.dismiss(animated: transition.animated) {
                         viewController.presentOnTop(
                             view,
                             named: transition.payloadViewName,
-                            animated: animated
+                            animated: transition.animated
                         ) {
                             completion()
                         }
                     }
                 } else {
-                    presentOnTop(view, named: transition.payloadViewName, animated: animated) {
+                    presentOnTop(view, named: transition.payloadViewName, animated: transition.animated) {
                         completion()
                     }
                 }
@@ -44,7 +43,7 @@ extension UIViewController {
                     throw ViewTransition.Error.nothingToDismiss
                 }
                 
-                dismiss(animated: animated) {
+                dismiss(animated: transition.animated) {
                     completion()
                 }
             }
@@ -62,7 +61,7 @@ extension UIViewController {
                 
                 navigationController.pushViewController(
                     view._toAppKitOrUIKitViewController(),
-                    animated: animated
+                    animated: transition.animated
                 ) {
                     completion()
                 }
@@ -72,12 +71,12 @@ extension UIViewController {
                 if let navigationController = nearestNavigationController {
                     navigationController.pushViewController(
                         view._toAppKitOrUIKitViewController(),
-                        animated: animated
+                        animated: transition.animated
                     ) {
                         completion()
                     }
                 } else {
-                    presentOnTop(view, named: transition.payloadViewName, animated: animated) {
+                    presentOnTop(view, named: transition.payloadViewName, animated: transition.animated) {
                         completion()
                     }
                 }
@@ -88,7 +87,7 @@ extension UIViewController {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
                 
-                viewController.popViewController(animated: animated) {
+                viewController.popViewController(animated: transition.animated) {
                     completion()
                 }
             }
@@ -98,14 +97,14 @@ extension UIViewController {
                     throw ViewTransition.Error.navigationControllerMissing
                 }
                 
-                viewController.popToRootViewController(animated: animated) {
+                viewController.popToRootViewController(animated: transition.animated) {
                     completion()
                 }
             }
                 
             case .popOrDismiss: do {
                 if let navigationController = nearestNavigationController, navigationController.viewControllers.count > 1 {
-                    navigationController.popViewController(animated: animated) {
+                    navigationController.popViewController(animated: transition.animated) {
                         completion()
                     }
                 } else {
@@ -113,7 +112,7 @@ extension UIViewController {
                         throw ViewTransition.Error.nothingToDismiss
                     }
                     
-                    dismiss(animated: animated) {
+                    dismiss(animated: transition.animated) {
                         completion()
                     }
                 }
@@ -121,7 +120,7 @@ extension UIViewController {
                 
             case .popToRootOrDismiss: do {
                 if let navigationController = nearestNavigationController, navigationController.viewControllers.count > 1 {
-                    navigationController.popToRootViewController(animated: animated) {
+                    navigationController.popToRootViewController(animated: transition.animated) {
                         completion()
                     }
                 } else {
@@ -129,7 +128,7 @@ extension UIViewController {
                         throw ViewTransition.Error.nothingToDismiss
                     }
                     
-                    dismiss(animated: animated) {
+                    dismiss(animated: transition.animated) {
                         completion()
                     }
                 }
@@ -151,7 +150,7 @@ extension UIViewController {
                 
             case .set(let view, _): do {
                 if let viewController = nearestNavigationController {
-                    viewController.setViewControllers([view._toAppKitOrUIKitViewController()], animated: animated)
+                    viewController.setViewControllers([view._toAppKitOrUIKitViewController()], animated: transition.animated)
                     
                     completion()
                 } else if let window = self.view.window, window.rootViewController === self {
@@ -163,8 +162,8 @@ extension UIViewController {
                     
                     completion()
                 } else if topmostPresentedViewController != nil {
-                    dismiss(animated: animated) {
-                        self.presentOnTop(view, named: transition.payloadViewName, animated: animated) {
+                    dismiss(animated: transition.animated) {
+                        self.presentOnTop(view, named: transition.payloadViewName, animated: transition.animated) {
                             completion()
                         }
                     }
@@ -178,11 +177,12 @@ extension UIViewController {
                 
                 var _error: Error?
                 
-                let firstTransition = transitions.removeFirst()
+                var firstTransition = transitions.removeFirst()
+                firstTransition.animated = transition.animated && firstTransition.animated
                 
-                try trigger(firstTransition, animated: animated) {
+                try trigger(firstTransition) {
                     do {
-                        try self.trigger(.linear(transitions), animated: animated) {
+                        try self.trigger(.linear(transitions)) {
                             completion()
                         }
                     } catch {
@@ -218,18 +218,17 @@ extension ViewTransition {
     @_transparent
     func triggerPublisher<VC: ViewCoordinator>(
         in controller: UIViewController,
-        animated: Bool,
         coordinator: VC
     ) -> AnyPublisher<ViewTransitionContext, Swift.Error> {
         let transition = merge(coordinator: coordinator)
         
         if case .custom(let trigger) = transition.finalize() {
-            return trigger()
+            return trigger(animated)
         }
         
         return Future { attemptToFulfill in
             do {
-                try controller.trigger(transition, animated: animated) {
+                try controller.trigger(transition) {
                     attemptToFulfill(.success(transition))
                 }
             } catch {                
