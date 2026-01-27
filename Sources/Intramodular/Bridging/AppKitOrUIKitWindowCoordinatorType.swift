@@ -56,12 +56,16 @@ open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorB
     
     @discardableResult
     override public func triggerPublisher(
-        for route: Route
+        for route: Route,
+        animated: Bool = true
     ) -> AnyPublisher<ViewTransitionContext, Error> {
         do {
             let window = try self.window.unwrap()
             
-            return transition(for: route)
+            var transition = transition(for: route)
+            transition.animated = animated
+            
+            return transition
                 .environment(environmentInsertions)
                 .triggerPublisher(in: window, coordinator: self)
                 .handleOutput { [weak self] _ in
@@ -80,9 +84,10 @@ open class AppKitOrUIKitWindowCoordinator<Route>: _AppKitOrUIKitViewCoordinatorB
     
     @discardableResult
     override public func trigger(
-        _ route: Route
+        _ route: Route,
+        animated: Bool = true
     ) -> AnyPublisher<ViewTransitionContext, Error> {
-        super.trigger(route)
+        super.trigger(route, animated: animated)
     }
 }
 

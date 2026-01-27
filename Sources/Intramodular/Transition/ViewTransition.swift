@@ -18,7 +18,7 @@ public struct ViewTransition: ViewTransitionContext {
     
     private var payload: Payload
     
-    var animated: Bool = true
+    public var animated: Bool = true
     var payloadViewName: AnyHashable?
     var payloadViewType: Any.Type?
     var environmentInsertions: EnvironmentInsertions
@@ -82,6 +82,8 @@ extension ViewTransition {
                 return nil
             case .set:
                 return nil
+            case .setMany:
+                return nil
             case .setRoot:
                 return nil
             case .linear:
@@ -121,6 +123,8 @@ extension ViewTransition: CustomStringConvertible {
                 return "Pop to root or dismiss"
             case .set:
                 return "Set"
+            case .setMany:
+                return "Set Many"
             case .setRoot:
                 return "Set root"
             case .linear:
@@ -248,6 +252,10 @@ extension ViewTransition {
         .init(payload: ViewTransition.Payload.setRoot, view: view)
     }
     
+    public static func setMany(_ views: [AnyPresentationView]) -> Self {
+        .init(payload: ViewTransition.Payload.setMany(views))
+    }
+    
     public static func linear(_ transitions: [ViewTransition]) -> Self {
         .init(payload: .linear(transitions))
     }
@@ -257,30 +265,30 @@ extension ViewTransition {
     }
     
     internal static func custom(
-        _ body: @escaping () -> AnyPublisher<ViewTransitionContext, Swift.Error>
+        _ body: @escaping (Bool) -> AnyPublisher<ViewTransitionContext, Swift.Error>
     ) -> ViewTransition {
         .init(payload: .custom(body))
     }
     
     @available(*, deprecated, renamed: "custom")
     internal static func dynamic(
-        _ body: @escaping () -> Void
+        _ body: @escaping (Bool) -> Void
     ) -> ViewTransition {
         .custom(body)
     }
     
     public static func custom(
-        @_implicitSelfCapture _ body: @escaping () -> Void
+        @_implicitSelfCapture _ body: @escaping (Bool) -> Void
     ) -> ViewTransition {
         // FIXME: Set a correct view transition context.
         struct CustomViewTransitionContext: ViewTransitionContext {
             
         }
         
-        return .custom { () -> AnyPublisher<ViewTransitionContext, Swift.Error> in
+        return .custom { (animated: Bool) -> AnyPublisher<ViewTransitionContext, Swift.Error> in
             Deferred {
                 Future<ViewTransitionContext, Swift.Error> { attemptToFulfill in
-                    body()
+                    body(animated)
                     
                     attemptToFulfill(.success(CustomViewTransitionContext()))
                 }

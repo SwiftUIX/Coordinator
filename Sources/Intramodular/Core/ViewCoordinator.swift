@@ -11,11 +11,11 @@ public protocol ViewCoordinator: EnvironmentPropagator, ObservableObject {
     
     typealias Transition = ViewTransition
     
-    func triggerPublisher(for _: Route) -> AnyPublisher<ViewTransitionContext, Error>
+    func triggerPublisher(for _: Route, animated: Bool) -> AnyPublisher<ViewTransitionContext, Error>
     
     @discardableResult
     @MainActor
-    func trigger(_: Route) -> AnyPublisher<ViewTransitionContext, Error>
+    func trigger(_: Route, animated: Bool) -> AnyPublisher<ViewTransitionContext, Error>
     
     func transition(for: Route) -> Transition
 }
