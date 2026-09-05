@@ -210,7 +210,7 @@ extension UIViewController {
         animated: Bool,
         completion: @escaping () -> Void
     ) {
-        topmostViewController.present(view)
+        (topmostViewController ?? self).present(view)
     }
 }
 
