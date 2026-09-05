@@ -43,7 +43,7 @@ open class UIViewControllerCoordinator<Route>: _AppKitOrUIKitViewCoordinatorBase
         self.rootViewController = rootViewController
     }
     
-    public convenience init<T: Hashable>(parent: UIViewControllerCoordinator<T>) {
+    public convenience init<T>(parent: UIViewControllerCoordinator<T>) {
         self.init(rootViewController: parent.rootViewController)
         
         parent.addChild(self)
